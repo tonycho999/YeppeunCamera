@@ -23,6 +23,11 @@
         <div id="controls">
             <div id="status-text">연결 확인 중...</div>
 
+            <div id="beauty-slider-box" class="hidden">
+                <span>강도: </span>
+                <input type="range" id="beauty-range" min="0" max="100" value="50">
+            </div>
+
             <div id="sticker-bar" class="hidden">
                 <button class="sticker-btn">🐱</button>
                 <button class="sticker-btn">😎</button>
@@ -35,7 +40,7 @@
             
             <div class="options">
                 <button id="btn-beauty" class="opt-btn">✨ 뽀샤시</button>
-                <button id="btn-premium" class="opt-btn" disabled>🎨 스티커 꾸미기</button>
+                <button id="btn-premium" class="opt-btn" disabled>🎨 꾸미기</button>
             </div>
 
             <button id="btn-shutter"></button>
