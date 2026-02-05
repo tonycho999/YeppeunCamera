@@ -70,7 +70,11 @@ const btnPremium = document.getElementById('btn-premium');
 const btnShutter = document.getElementById('btn-shutter');
 const btnSwitch = document.getElementById('btn-switch');
 const btnCloseAd = document.getElementById('btn-close-ad');
-const stickerBar = document.getElementById('sticker-bar'); // [NEW] 스티커 바
+
+// [NEW] 스티커 관련 요소
+const stickerBar = document.getElementById('sticker-bar');
+const stickerSizeBox = document.getElementById('sticker-size-box');
+const stickerSizeRange = document.getElementById('sticker-size-range');
 
 let isBeautyMode = false;
 let isPremiumMode = false;
@@ -91,27 +95,20 @@ let frameIndex = 0;
 // ==========================================
 // 3. 초기화 (스티커 생성 포함)
 // ==========================================
-
-// [NEW] 스티커 버튼 자동 생성 함수
 function initStickers() {
-    stickerBar.innerHTML = ''; // 기존 내용 비우기
-    
-    // stickers.js에 있는 stickerList 배열을 가져와서 버튼 생성
+    stickerBar.innerHTML = '';
     if (typeof stickerList !== 'undefined') {
         stickerList.forEach(emoji => {
             const btn = document.createElement('button');
             btn.className = 'sticker-btn';
             btn.innerText = emoji;
-            
-            // 버튼 클릭 시 동작
             btn.addEventListener('click', () => {
+                // [수정] 스티커를 누르면 화면에 보이고 내용 업데이트
                 stickerEl.innerText = emoji;
+                stickerEl.classList.remove('hidden');
             });
-            
             stickerBar.appendChild(btn);
         });
-    } else {
-        console.error("stickerList를 찾을 수 없습니다. stickers.js가 연결되었나요?");
     }
 }
 
@@ -201,6 +198,7 @@ btnFrame.addEventListener('click', () => {
     if (!isPremiumMode) { document.getElementById('ad-modal').classList.remove('hidden'); return; }
     frameIndex = (frameIndex + 1) % frameStyles.length; updateFrameUI();
 });
+
 function updateFrameUI() {
     const style = frameStyles[frameIndex];
     frameOverlay.style.border = 'none'; frameOverlay.className = ''; 
@@ -211,6 +209,13 @@ function updateFrameUI() {
         else if (style.type === 'rainbow') frameOverlay.classList.add('frame-rainbow');
     }
 }
+
+// [NEW] 스티커 크기 조절 로직
+stickerSizeRange.addEventListener('input', () => {
+    const size = stickerSizeRange.value;
+    stickerEl.style.fontSize = `${size}px`;
+});
+
 const beautySliderBox = document.getElementById('beauty-slider-box');
 const beautyRange = document.getElementById('beauty-range');
 function applyFilter() {
@@ -228,21 +233,50 @@ btnBeauty.addEventListener('click', () => {
     applyFilter();
 });
 beautyRange.addEventListener('input', () => { if (isBeautyMode) applyFilter(); });
+
 btnPremium.addEventListener('click', () => {
     if (!navigator.onLine) { alert(t.alertNet); return; }
     if (!isPremiumMode) document.getElementById('ad-modal').classList.remove('hidden');
-    else togglePremiumUI(stickerBar.classList.contains('hidden')); // 토글 수정
+    else togglePremiumUI(stickerBar.classList.contains('hidden'));
 });
+
+// [수정] 광고 닫기: 프리미엄 켜되, 스티커는 안 보이게 시작 (메뉴만 켬)
 btnCloseAd.addEventListener('click', () => {
-    document.getElementById('ad-modal').classList.add('hidden'); isPremiumMode = true; alert(t.alertPremium);
-    togglePremiumUI(true); btnFrame.classList.remove('on-mode');
+    document.getElementById('ad-modal').classList.add('hidden'); 
+    isPremiumMode = true; 
+    alert(t.alertPremium);
+    
+    // 메뉴와 사이즈 조절바는 보여주되
+    stickerBar.classList.remove('hidden');
+    stickerSizeBox.classList.remove('hidden');
+    btnPremium.innerText = t.premiumOn; 
+    btnPremium.classList.add('premium-active');
+    
+    // 스티커 자체는 숨김 (사용자가 골라야 나옴)
+    stickerEl.classList.add('hidden');
+    
+    btnFrame.classList.remove('on-mode');
 });
+
 function togglePremiumUI(show) {
-    if (show) { stickerBar.classList.remove('hidden'); stickerEl.classList.remove('hidden'); btnPremium.innerText = t.premiumOn; btnPremium.classList.add('premium-active'); }
-    else { stickerBar.classList.add('hidden'); stickerEl.classList.add('hidden'); btnPremium.innerText = t.premium; btnPremium.classList.remove('premium-active'); }
+    if (show) { 
+        stickerBar.classList.remove('hidden'); 
+        stickerSizeBox.classList.remove('hidden');
+        // 스티커가 내용이 있을 때만 보임
+        if(stickerEl.innerText.trim() !== "") stickerEl.classList.remove('hidden');
+        btnPremium.innerText = t.premiumOn; 
+        btnPremium.classList.add('premium-active'); 
+    }
+    else { 
+        stickerBar.classList.add('hidden'); 
+        stickerSizeBox.classList.add('hidden');
+        stickerEl.classList.add('hidden'); 
+        btnPremium.innerText = t.premium; 
+        btnPremium.classList.remove('premium-active'); 
+    }
 }
 
-// 스티커 드래그 로직
+// 스티커 드래그
 let isDrag=false, sX, sY, iL, iT;
 const startD = e => { if(!isPremiumMode)return; e.preventDefault(); isDrag=true; sX=e.touches?e.touches[0].clientX:e.clientX; sY=e.touches?e.touches[0].clientY:e.clientY; const r=stickerEl.getBoundingClientRect(), p=document.getElementById('camera-wrap').getBoundingClientRect(); iL=r.left-p.left; iT=r.top-p.top; document.addEventListener('touchmove',moveD,{passive:false}); document.addEventListener('mousemove',moveD); document.addEventListener('touchend',endD); document.addEventListener('mouseup',endD); };
 const moveD = e => { if(!isDrag)return; e.preventDefault(); let cX=e.touches?e.touches[0].clientX:e.clientX, cY=e.touches?e.touches[0].clientY:e.clientY; stickerEl.style.transform='none'; stickerEl.style.left=`${iL+(cX-sX)}px`; stickerEl.style.top=`${iT+(cY-sY)}px`; };
@@ -289,7 +323,7 @@ function takePhoto() {
         ctx.strokeStyle = grad; ctx.lineWidth = 40; ctx.strokeRect(20, 20, vw-40, vh-40);
     }
 
-    // 스티커
+    // 스티커 (크기 반영)
     if (isPremiumMode && !stickerEl.classList.contains('hidden')) {
         const wrapRect = document.getElementById('camera-wrap').getBoundingClientRect();
         const stickerRect = stickerEl.getBoundingClientRect();
@@ -306,7 +340,11 @@ function takePhoto() {
         if(facingMode === 'user') canvasX = (1 - rx) * vw; 
         const canvasY = ry * vh;
 
-        ctx.font = `${stickerRect.height * (vw / wrapRect.width)}px serif`;
+        // [수정] 현재 조절된 폰트 크기 가져와서 비율 계산
+        const currentFontSize = parseInt(window.getComputedStyle(stickerEl).fontSize);
+        const fontScale = currentFontSize * (vw / wrapRect.width); // 화면 비율에 맞춰 확대
+
+        ctx.font = `${fontScale}px serif`;
         ctx.fillStyle = "white"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
         ctx.fillText(stickerEl.innerText, canvasX, canvasY);
     }
@@ -328,7 +366,7 @@ function takePhoto() {
     link.click();
 }
 
-// 실행 순서: 스티커 로드 -> 언어 적용 -> 카메라 시작
+// 실행
 initStickers();
 applyLanguage();
 window.addEventListener('online', checkConnection);
