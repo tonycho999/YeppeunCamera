@@ -5,36 +5,42 @@ const translations = {
     ko: {
         timerOff: "⏱️ OFF", timer3: "⏱️ 3초", timer5: "⏱️ 5초", timer10: "⏱️ 10초",
         retroOff: "🎞️ 레트로 OFF", retroOn: "🎞️ 레트로 ON",
-        frameOff: "🖼️ 프레임 OFF", frameChange: "🖼️ 프레임 변경", framePaid: "🖼️ 프레임(유료)",
+        // [수정] '유료' 글자 제거
+        frameOff: "🖼️ 프레임 OFF", frameChange: "🖼️ 프레임 변경", framePaid: "🖼️ 프레임", 
         online: "🟢 온라인", offline: "🔴 오프라인",
         beauty: "✨ 뽀샤시", beautyOn: "✨ 뽀샤시 ON",
-        premium: "🎨 꾸미기(유료)", premiumOn: "🎨 꾸미기 ON",
+        // [수정] '유료' 글자 제거
+        premium: "🎨 꾸미기", premiumOn: "🎨 꾸미기 ON",
         adTitle: "잠깐! 🖐️", adDesc: "광고를 닫으면<br>스티커 & 프레임이 열립니다!",
         adClose: "광고 닫고 사용하기", alertNet: "인터넷 연결이 필요합니다!",
-        alertPremium: "프리미엄 기능이 활성화되었습니다!",
+        alertPremium: "모든 기능이 활성화되었습니다!", // 문구 순화
         install: "⬇️ 앱 설치",
         done: "✅ 완료"
     },
     en: {
         timerOff: "⏱️ OFF", timer3: "⏱️ 3s", timer5: "⏱️ 5s", timer10: "⏱️ 10s",
         retroOff: "🎞️ Retro OFF", retroOn: "🎞️ Retro ON",
-        frameOff: "🖼️ Frame OFF", frameChange: "🖼️ Change Frame", framePaid: "🖼️ Frame(Paid)",
+        // [Modified] Removed 'Paid'
+        frameOff: "🖼️ Frame OFF", frameChange: "🖼️ Change Frame", framePaid: "🖼️ Frame",
         online: "🟢 Online", offline: "🔴 Offline",
         beauty: "✨ Beauty", beautyOn: "✨ Beauty ON",
-        premium: "🎨 Premium", premiumOn: "🎨 Premium ON",
+        // [Modified] Removed 'Paid'
+        premium: "🎨 Deco", premiumOn: "🎨 Deco ON",
         adTitle: "Wait! 🖐️", adDesc: "Watch ad to unlock<br>Stickers & Frames!",
         adClose: "Close & Unlock", alertNet: "Internet connection required!",
-        alertPremium: "Premium features activated!",
+        alertPremium: "All features unlocked!",
         install: "⬇️ Install",
         done: "✅ Done"
     },
     ja: {
         timerOff: "⏱️ OFF", timer3: "⏱️ 3秒", timer5: "⏱️ 5秒", timer10: "⏱️ 10秒",
         retroOff: "🎞️ レトロ OFF", retroOn: "🎞️ レトロ ON",
-        frameOff: "🖼️ 枠なし", frameChange: "🖼️ 枠変更", framePaid: "🖼️ フレーム(有料)",
+        // [Modified] Removed '有料'
+        frameOff: "🖼️ 枠なし", frameChange: "🖼️ 枠変更", framePaid: "🖼️ フレーム",
         online: "🟢 オンライン", offline: "🔴 オフライン",
         beauty: "✨ 美肌", beautyOn: "✨ 美肌 ON",
-        premium: "🎨 デコ(有料)", premiumOn: "🎨 デコ ON",
+        // [Modified] Removed '有料'
+        premium: "🎨 デコ", premiumOn: "🎨 デコ ON",
         adTitle: "ちょっと待って! 🖐️", adDesc: "広告を見ると<br>スタンプと枠が使えます!",
         adClose: "閉じて使う", alertNet: "インターネット接続が必要です!",
         alertPremium: "プレミアムモード解除!",
@@ -44,10 +50,12 @@ const translations = {
     zh: {
         timerOff: "⏱️ OFF", timer3: "⏱️ 3秒", timer5: "⏱️ 5秒", timer10: "⏱️ 10秒",
         retroOff: "🎞️ 复古 OFF", retroOn: "🎞️ 复古 ON",
-        frameOff: "🖼️ 无边框", frameChange: "🖼️ 更换边框", framePaid: "🖼️ 边框(付费)",
+        // [Modified] Removed '付费'
+        frameOff: "🖼️ 无边框", frameChange: "🖼️ 更换边框", framePaid: "🖼️ 边框",
         online: "🟢 在线", offline: "🔴 离线",
         beauty: "✨ 美颜", beautyOn: "✨ 美颜 ON",
-        premium: "🎨 装饰(付费)", premiumOn: "🎨 装饰 ON",
+        // [Modified] Removed '付费'
+        premium: "🎨 装饰", premiumOn: "🎨 装饰 ON",
         adTitle: "等等! 🖐️", adDesc: "观看广告以解锁<br>贴纸和边框!",
         adClose: "关闭广告并使用", alertNet: "需要网络连接!",
         alertPremium: "高级模式已解锁!",
@@ -132,26 +140,27 @@ function applyLanguage() {
     
     // 프레임 버튼
     if (!isPremiumMode) {
-        btnFrame.innerText = t.framePaid;
+        btnFrame.innerText = t.framePaid; // 이제 '프레임(유료)' 대신 '프레임'으로 표시됨
     } else {
         const style = frameStyles[frameIndex];
         btnFrame.innerText = (style.type === 'none') ? t.frameOff : t.frameChange;
     }
     
-    // [핵심] 뷰티 버튼 상태 (메뉴 열림 ? 완료 : (켜짐 ? ON : OFF))
+    // 뷰티 버튼 상태
     if (isBeautyMenuOpen) {
         btnBeauty.innerText = t.done;
     } else {
         btnBeauty.innerText = isBeautyMode ? t.beautyOn : t.beauty;
     }
     
-    // [핵심] 꾸미기 버튼 상태
+    // 꾸미기 버튼 상태
     if (isStickerMenuOpen) {
         btnPremium.innerText = t.done;
     } else {
         btnPremium.innerText = isPremiumMode ? t.premiumOn : t.premium;
     }
     
+    document.getElementById('txt-intensity').innerText = t.intensity;
     document.getElementById('txt-ad-title').innerText = t.adTitle;
     document.getElementById('txt-ad-desc').innerHTML = t.adDesc;
     document.getElementById('btn-close-ad').innerText = t.adClose;
@@ -200,7 +209,7 @@ stickerSizeRange.addEventListener('input', () => {
 
 
 // ==========================================
-// 5. [핵심] 뷰티 버튼 & 완료 로직
+// 5. 뷰티 버튼 & 완료 로직
 // ==========================================
 function applyFilter() {
     if (isBeautyMode) {
@@ -220,7 +229,6 @@ btnBeauty.addEventListener('click', () => {
         // [완료] 누름 -> 메뉴 닫고 설정 유지
         isBeautyMenuOpen = false;
         beautySliderBox.classList.add('hidden');
-        // 'ON' 상태 표시를 위해 active 클래스 토글 (선택 사항)
         btnBeauty.classList.remove('active-btn'); 
         if(isBeautyMode) btnBeauty.classList.add('on-mode');
     } else {
@@ -229,14 +237,14 @@ btnBeauty.addEventListener('click', () => {
         isBeautyMode = true; // 열면 자동 ON
         beautySliderBox.classList.remove('hidden');
         
-        // 꾸미기 메뉴가 열려있으면 닫기 (서로 겹치지 않게)
+        // 꾸미기 메뉴가 열려있으면 닫기
         if(isStickerMenuOpen) closeStickerMenu();
         
-        btnBeauty.classList.add('active-btn'); // 흰색 배경(편집중)
+        btnBeauty.classList.add('active-btn');
         btnBeauty.classList.remove('on-mode');
         applyFilter();
     }
-    applyLanguage(); // 버튼 텍스트 갱신 (Beauty <-> Done)
+    applyLanguage();
 });
 
 [rangeBright, rangeColor, rangeWarm, rangeSoft].forEach(range => {
@@ -245,7 +253,7 @@ btnBeauty.addEventListener('click', () => {
 
 
 // ==========================================
-// 6. [핵심] 꾸미기 버튼 & 완료 로직
+// 6. 꾸미기 버튼 & 완료 로직
 // ==========================================
 function openStickerMenu() {
     isStickerMenuOpen = true;
@@ -347,15 +355,12 @@ function updateFrameUI() {
     applyLanguage();
 }
 
-// 스티커 드래그
 let isDrag=false, sX, sY, iL, iT, currentDragEl=null;
 function handleStickerStart(e) { if(!isPremiumMode) return; e.preventDefault(); currentDragEl=e.target; selectSticker(currentDragEl); isDrag=true; sX=e.touches?e.touches[0].clientX:e.clientX; sY=e.touches?e.touches[0].clientY:e.clientY; const r=currentDragEl.getBoundingClientRect(), p=stickerLayer.getBoundingClientRect(); iL=r.left-p.left+(r.width/2); iT=r.top-p.top+(r.height/2); document.addEventListener('touchmove',handleStickerMove,{passive:false}); document.addEventListener('mousemove',handleStickerMove); document.addEventListener('touchend',handleStickerEnd); document.addEventListener('mouseup',handleStickerEnd); }
 function handleStickerMove(e) { if(!isDrag||!currentDragEl) return; e.preventDefault(); let cX=e.touches?e.touches[0].clientX:e.clientX, cY=e.touches?e.touches[0].clientY:e.clientY; currentDragEl.style.left=`${iL+(cX-sX)}px`; currentDragEl.style.top=`${iT+(cY-sY)}px`; }
 function handleStickerEnd() { isDrag=false; currentDragEl=null; document.removeEventListener('touchmove',handleStickerMove); document.removeEventListener('mousemove',handleStickerMove); document.removeEventListener('touchend',handleStickerEnd); document.removeEventListener('mouseup',handleStickerEnd); }
 
-// 셔터
 btnShutter.addEventListener('click', () => {
-    // 사진 찍을 땐 선택 테두리 제거
     if(activeSticker) activeSticker.classList.remove('sticker-selected');
     if (timerState > 0) {
         let count = timerState; timerDisplay.innerText = count; timerDisplay.classList.remove('hidden');
@@ -371,19 +376,16 @@ function takePhoto() {
     const vw = video.videoWidth; const vh = video.videoHeight;
     canvas.width = vw; canvas.height = vh;
 
-    // 비디오 & 필터
     if (facingMode === 'user') { ctx.translate(vw, 0); ctx.scale(-1, 1); }
     ctx.filter = isBeautyMode ? `brightness(${rangeBright.value/100}) saturate(${rangeColor.value/100}) sepia(${rangeWarm.value/100}) blur(${rangeSoft.value/10}px)` : 'none';
     ctx.drawImage(video, 0, 0, vw, vh); ctx.filter = 'none';
 
-    // 프레임
     const style = frameStyles[frameIndex];
     if (facingMode === 'user') { ctx.scale(-1, 1); ctx.translate(-vw, 0); }
     if (style.type === 'color') { ctx.strokeStyle = style.val; ctx.lineWidth = 40; ctx.strokeRect(20, 20, vw-40, vh-40); }
     else if (style.type === 'film') { ctx.fillStyle = 'black'; const sW=60; ctx.fillRect(0,0,sW,vh); ctx.fillRect(vw-sW,0,sW,vh); ctx.fillStyle='white'; const hH=30, gap=20; for(let y=20; y<vh; y+=(hH+gap)){ ctx.fillRect(15,y,30,hH); ctx.fillRect(vw-45,y,30,hH); } }
     else if (style.type === 'rainbow') { const g=ctx.createLinearGradient(0,0,vw,vh); g.addColorStop(0,"red"); g.addColorStop(0.2,"orange"); g.addColorStop(0.4,"yellow"); g.addColorStop(0.6,"green"); g.addColorStop(0.8,"blue"); g.addColorStop(1,"violet"); ctx.strokeStyle=g; ctx.lineWidth=40; ctx.strokeRect(20,20,vw-40,vh-40); }
 
-    // 스티커
     if (isPremiumMode && !stickerLayer.classList.contains('hidden')) {
         const stickers = document.querySelectorAll('.sticker-item');
         const wrapRect = document.getElementById('camera-wrap').getBoundingClientRect();
@@ -400,7 +402,6 @@ function takePhoto() {
         });
     }
 
-    // 날짜
     if (isRetroOn) {
         const dStr = getRetroString();
         ctx.font = `bold ${vw * 0.05}px 'Courier New', monospace`; ctx.fillStyle = "#ffaa00"; ctx.textAlign = "right"; ctx.shadowColor = "rgba(0,0,0,0.8)"; ctx.shadowBlur = 4;
@@ -410,7 +411,6 @@ function takePhoto() {
     const link = document.createElement('a'); link.download = `smartcam_${Date.now()}.png`;
     link.href = canvas.toDataURL('image/png'); link.click();
     
-    // 사진 찍고 선택 상태 복구
     if(activeSticker && isStickerMenuOpen) activeSticker.classList.add('sticker-selected');
 }
 
