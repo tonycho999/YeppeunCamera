@@ -236,7 +236,7 @@ btnBeauty.addEventListener('click', () => {
         btnBeauty.classList.remove('on-mode');
         applyFilter();
     }
-    applyLanguage();
+    applyLanguage(); // 버튼 텍스트 갱신 (Beauty <-> Done)
 });
 
 [rangeBright, rangeColor, rangeWarm, rangeSoft].forEach(range => {
@@ -347,12 +347,15 @@ function updateFrameUI() {
     applyLanguage();
 }
 
+// 스티커 드래그
 let isDrag=false, sX, sY, iL, iT, currentDragEl=null;
 function handleStickerStart(e) { if(!isPremiumMode) return; e.preventDefault(); currentDragEl=e.target; selectSticker(currentDragEl); isDrag=true; sX=e.touches?e.touches[0].clientX:e.clientX; sY=e.touches?e.touches[0].clientY:e.clientY; const r=currentDragEl.getBoundingClientRect(), p=stickerLayer.getBoundingClientRect(); iL=r.left-p.left+(r.width/2); iT=r.top-p.top+(r.height/2); document.addEventListener('touchmove',handleStickerMove,{passive:false}); document.addEventListener('mousemove',handleStickerMove); document.addEventListener('touchend',handleStickerEnd); document.addEventListener('mouseup',handleStickerEnd); }
 function handleStickerMove(e) { if(!isDrag||!currentDragEl) return; e.preventDefault(); let cX=e.touches?e.touches[0].clientX:e.clientX, cY=e.touches?e.touches[0].clientY:e.clientY; currentDragEl.style.left=`${iL+(cX-sX)}px`; currentDragEl.style.top=`${iT+(cY-sY)}px`; }
 function handleStickerEnd() { isDrag=false; currentDragEl=null; document.removeEventListener('touchmove',handleStickerMove); document.removeEventListener('mousemove',handleStickerMove); document.removeEventListener('touchend',handleStickerEnd); document.removeEventListener('mouseup',handleStickerEnd); }
 
+// 셔터
 btnShutter.addEventListener('click', () => {
+    // 사진 찍을 땐 선택 테두리 제거
     if(activeSticker) activeSticker.classList.remove('sticker-selected');
     if (timerState > 0) {
         let count = timerState; timerDisplay.innerText = count; timerDisplay.classList.remove('hidden');
