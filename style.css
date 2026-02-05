@@ -323,3 +323,30 @@ input[type=range] {
 }
 
 .hidden { display: none !important; }
+
+/* 기존 CSS 내용 유지하되, 아래 내용으로 수정/추가하세요 */
+
+/* ... (위쪽 코드 동일) ... */
+
+/* [수정] 프레임 스타일: 무지개 효과 (흰화면 오류 해결) */
+.frame-rainbow {
+    border: 20px solid transparent !important;
+    /* 가운데를 투명하게 유지하면서 테두리에만 그라데이션 적용 */
+    border-image: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet) 1 !important;
+}
+
+/* [NEW] 스티커 크기 조절 박스 */
+#sticker-size-box {
+    width: 80%;
+    background: #444; /* 뽀샤시랑 구분되게 약간 밝은색 */
+    padding: 8px 15px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
+    font-size: 13px;
+    margin-bottom: 5px; /* 스티커바랑 간격 */
+}
+
+/* ... (나머지 CSS 동일) ... */
