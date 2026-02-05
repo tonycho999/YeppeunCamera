@@ -5,26 +5,22 @@ const translations = {
     ko: {
         timerOff: "⏱️ OFF", timer3: "⏱️ 3초", timer5: "⏱️ 5초", timer10: "⏱️ 10초",
         retroOff: "🎞️ 레트로 OFF", retroOn: "🎞️ 레트로 ON",
-        // [수정] '유료' 글자 제거
-        frameOff: "🖼️ 프레임 OFF", frameChange: "🖼️ 프레임 변경", framePaid: "🖼️ 프레임", 
+        frameOff: "🖼️ 프레임 OFF", frameChange: "🖼️ 프레임 변경", framePaid: "🖼️ 프레임",
         online: "🟢 온라인", offline: "🔴 오프라인",
         beauty: "✨ 뽀샤시", beautyOn: "✨ 뽀샤시 ON",
-        // [수정] '유료' 글자 제거
         premium: "🎨 꾸미기", premiumOn: "🎨 꾸미기 ON",
         adTitle: "잠깐! 🖐️", adDesc: "광고를 닫으면<br>스티커 & 프레임이 열립니다!",
         adClose: "광고 닫고 사용하기", alertNet: "인터넷 연결이 필요합니다!",
-        alertPremium: "모든 기능이 활성화되었습니다!", // 문구 순화
+        alertPremium: "모든 기능이 활성화되었습니다!",
         install: "⬇️ 앱 설치",
         done: "✅ 완료"
     },
     en: {
         timerOff: "⏱️ OFF", timer3: "⏱️ 3s", timer5: "⏱️ 5s", timer10: "⏱️ 10s",
         retroOff: "🎞️ Retro OFF", retroOn: "🎞️ Retro ON",
-        // [Modified] Removed 'Paid'
         frameOff: "🖼️ Frame OFF", frameChange: "🖼️ Change Frame", framePaid: "🖼️ Frame",
         online: "🟢 Online", offline: "🔴 Offline",
         beauty: "✨ Beauty", beautyOn: "✨ Beauty ON",
-        // [Modified] Removed 'Paid'
         premium: "🎨 Deco", premiumOn: "🎨 Deco ON",
         adTitle: "Wait! 🖐️", adDesc: "Watch ad to unlock<br>Stickers & Frames!",
         adClose: "Close & Unlock", alertNet: "Internet connection required!",
@@ -35,11 +31,9 @@ const translations = {
     ja: {
         timerOff: "⏱️ OFF", timer3: "⏱️ 3秒", timer5: "⏱️ 5秒", timer10: "⏱️ 10秒",
         retroOff: "🎞️ レトロ OFF", retroOn: "🎞️ レトロ ON",
-        // [Modified] Removed '有料'
         frameOff: "🖼️ 枠なし", frameChange: "🖼️ 枠変更", framePaid: "🖼️ フレーム",
         online: "🟢 オンライン", offline: "🔴 オフライン",
         beauty: "✨ 美肌", beautyOn: "✨ 美肌 ON",
-        // [Modified] Removed '有料'
         premium: "🎨 デコ", premiumOn: "🎨 デコ ON",
         adTitle: "ちょっと待って! 🖐️", adDesc: "広告を見ると<br>スタンプと枠が使えます!",
         adClose: "閉じて使う", alertNet: "インターネット接続が必要です!",
@@ -50,11 +44,9 @@ const translations = {
     zh: {
         timerOff: "⏱️ OFF", timer3: "⏱️ 3秒", timer5: "⏱️ 5秒", timer10: "⏱️ 10秒",
         retroOff: "🎞️ 复古 OFF", retroOn: "🎞️ 复古 ON",
-        // [Modified] Removed '付费'
         frameOff: "🖼️ 无边框", frameChange: "🖼️ 更换边框", framePaid: "🖼️ 边框",
         online: "🟢 在线", offline: "🔴 离线",
         beauty: "✨ 美颜", beautyOn: "✨ 美颜 ON",
-        // [Modified] Removed '付费'
         premium: "🎨 装饰", premiumOn: "🎨 装饰 ON",
         adTitle: "等等! 🖐️", adDesc: "观看广告以解锁<br>贴纸和边框!",
         adClose: "关闭广告并使用", alertNet: "需要网络连接!",
@@ -140,7 +132,7 @@ function applyLanguage() {
     
     // 프레임 버튼
     if (!isPremiumMode) {
-        btnFrame.innerText = t.framePaid; // 이제 '프레임(유료)' 대신 '프레임'으로 표시됨
+        btnFrame.innerText = t.framePaid;
     } else {
         const style = frameStyles[frameIndex];
         btnFrame.innerText = (style.type === 'none') ? t.frameOff : t.frameChange;
@@ -193,7 +185,7 @@ function addSticker(text) {
 }
 
 function selectSticker(el) {
-    if (!isStickerMenuOpen) openStickerMenu(); // 선택 시 자동 메뉴 열기
+    if (!isStickerMenuOpen) openStickerMenu();
     if (activeSticker) activeSticker.classList.remove('sticker-selected');
     activeSticker = el; activeSticker.classList.add('sticker-selected');
     stickerSizeRange.value = parseInt(activeSticker.style.fontSize);
@@ -226,20 +218,15 @@ function applyFilter() {
 
 btnBeauty.addEventListener('click', () => {
     if (isBeautyMenuOpen) {
-        // [완료] 누름 -> 메뉴 닫고 설정 유지
         isBeautyMenuOpen = false;
         beautySliderBox.classList.add('hidden');
         btnBeauty.classList.remove('active-btn'); 
         if(isBeautyMode) btnBeauty.classList.add('on-mode');
     } else {
-        // [열기] 누름
         isBeautyMenuOpen = true;
-        isBeautyMode = true; // 열면 자동 ON
+        isBeautyMode = true; 
         beautySliderBox.classList.remove('hidden');
-        
-        // 꾸미기 메뉴가 열려있으면 닫기
         if(isStickerMenuOpen) closeStickerMenu();
-        
         btnBeauty.classList.add('active-btn');
         btnBeauty.classList.remove('on-mode');
         applyFilter();
@@ -261,7 +248,6 @@ function openStickerMenu() {
     if(activeSticker) stickerEditBox.classList.remove('hidden');
     stickerLayer.classList.remove('hidden');
     
-    // 뷰티 메뉴 닫기
     if(isBeautyMenuOpen) {
         isBeautyMenuOpen = false;
         beautySliderBox.classList.add('hidden');
@@ -305,18 +291,24 @@ btnCloseAd.addEventListener('click', () => {
 // 7. 기타 (카메라/프레임/타이머/PWA)
 // ==========================================
 async function initCamera() {
-    if (video.srcObject) { const tracks = video.srcObject.getTracks(); tracks.forEach(track => track.stop()); }
+    // 기존 스트림이 있다면 중지 (카메라 전환 또는 재시작 시)
+    if (video.srcObject) { 
+        const tracks = video.srcObject.getTracks(); 
+        tracks.forEach(track => track.stop()); 
+    }
     try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facingMode }, audio: false });
         video.srcObject = stream;
         video.style.transform = (facingMode === 'user') ? 'scaleX(-1)' : 'none';
     } catch (err) { console.error(err); alert("Camera Error"); }
 }
+
 btnSwitch.addEventListener('click', () => {
     facingMode = (facingMode === 'user') ? 'environment' : 'user';
     btnSwitch.style.transform = "rotate(180deg)"; setTimeout(() => btnSwitch.style.transform = "rotate(0deg)", 300);
     initCamera();
 });
+
 function checkConnection() {
     if (navigator.onLine) { statusText.innerText = t.online; btnPremium.disabled = false; btnFrame.disabled = false; }
     else { statusText.innerText = t.offline; btnPremium.disabled = true; btnFrame.disabled = true; if(isPremiumMode) { isPremiumMode=false; closeStickerMenu(); frameIndex=0; updateFrameUI(); } }
@@ -420,4 +412,22 @@ window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); defe
 btnInstall.addEventListener('click', async () => { if (!deferredPrompt) return; deferredPrompt.prompt(); const { outcome } = await deferredPrompt.userChoice; if (outcome === 'accepted') btnInstall.classList.add('hidden'); deferredPrompt = null; });
 if (window.matchMedia('(display-mode: standalone)').matches) btnInstall.classList.add('hidden');
 
+// ==========================================
+// 8. [핵심] 백그라운드 전환 시 카메라 끄기
+// ==========================================
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        // 앱이 배경으로 갔을 때: 카메라 정지
+        if (video.srcObject) {
+            const tracks = video.srcObject.getTracks();
+            tracks.forEach(track => track.stop());
+            video.srcObject = null;
+        }
+    } else {
+        // 앱으로 돌아왔을 때: 카메라 재시작
+        initCamera();
+    }
+});
+
+// 실행
 initStickers(); applyLanguage(); window.addEventListener('online', checkConnection); window.addEventListener('offline', checkConnection); initCamera(); checkConnection();
