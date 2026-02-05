@@ -3,9 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Smart Camera</title>
+    
+    <title>Smart Cam - Retro, Sticker & Photo Booth (Web App)</title>
+    <meta name="description" content="Free Web Camera App. Retro date stamp, Life 4 Cut frame, Cute stickers, and Beauty filter. No install required. 무료 웹 카메라, 인생네컷 프레임, 레트로 날짜 도장, 스티커 꾸미기.">
+    <meta name="keywords" content="smart camera, web camera, pwa, retro filter, sticker photo, beauty camera, 인생네컷, 웹카메라, 스티커사진, 레트로카메라, 뽀샤시">
+    
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
+    
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7272957295128241" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -22,14 +27,20 @@
 
         <div id="camera-wrap">
             <video id="video" autoplay playsinline muted></video>
+            
             <div id="retro-date" class="hidden"></div>
+            
             <div id="sticker-layer" class="hidden"></div>
+            
             <div id="frame-overlay"></div>
+            
             <div id="timer-display" class="hidden"></div>
+            
             <canvas id="canvas" style="display:none;"></canvas>
         </div>
 
         <div id="controls">
+            
             <div id="beauty-slider-box" class="hidden">
                 <span id="txt-intensity">Intensity: </span>
                 <input type="range" id="beauty-range" min="0" max="100" value="50">
@@ -49,8 +60,7 @@
             </div>
 
             <div id="shutter-area">
-                <div style="width: 50px;"></div>
-                <button id="btn-shutter"></button>
+                <div style="width: 50px;"></div> <button id="btn-shutter"></button>
                 <button id="btn-switch">🔄</button>
             </div>
 
@@ -61,6 +71,7 @@
             <div class="ad-content-box">
                 <h3 id="txt-ad-title">Wait! 🖐️</h3>
                 <p id="txt-ad-desc">Watch ad to unlock stickers & frames!</p>
+                
                 <div class="ad-placeholder">
                     <ins class="adsbygoogle"
                          style="display:block"
@@ -70,13 +81,29 @@
                          data-full-width-responsive="true"></ins>
                     <script> (adsbygoogle = window.adsbygoogle || []).push({}); </script>
                 </div>
+
                 <button id="btn-close-ad">Close & Unlock</button>
             </div>
         </div>
     </div>
 
+    <div style="position:absolute; width:1px; height:1px; overflow:hidden; opacity:0; z-index:-1;">
+        <h1>Smart Web Camera & Photo Booth</h1>
+        <p>Free online camera app. Features: Retro Date Stamp, 4-Cut Frame, Cute Stickers, Beauty Filter. Works on iOS & Android.</p>
+        <p>설치 없는 무료 웹 카메라. 인생네컷 프레임, 레트로 날짜 도장, 스티커 꾸미기, 뽀샤시 필터.</p>
+        <p>無料WEBカメラ。レトロな日付入り写真、韓国プリクラ風フレーム、かわいいスタンプデコ、美肌フィルター。</p>
+        <p>免费网页相机。复古胶片日期水印、人生四格边框、可爱贴纸装饰、美颜滤镜。</p>
+    </div>
+
     <script src="stickers.js"></script>
     <script src="app.js"></script>
-    <script> if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js'); </script>
+    <script>
+        // PWA 서비스 워커 등록
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js')
+                .then(() => console.log('Service Worker Registered'))
+                .catch((err) => console.log('Service Worker Failed', err));
+        }
+    </script>
 </body>
 </html>
