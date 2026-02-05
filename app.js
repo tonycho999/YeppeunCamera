@@ -52,10 +52,8 @@ const translations = {
     }
 };
 
-// [핵심] 브라우저 언어 자동 감지 (버튼 없음)
-// 'ko-KR' -> 'ko', 'en-US' -> 'en' 등으로 앞 2글자만 따옴
+// [핵심] 브라우저 언어 자동 감지
 const browserLang = navigator.language.slice(0, 2);
-// 지원하는 언어면 그 언어로, 아니면 영어(en)로 설정
 const t = translations[browserLang] || translations['en'];
 
 
@@ -106,9 +104,7 @@ let activeSticker = null;
 // ==========================================
 // 3. 초기화 (언어 적용 함수)
 // ==========================================
-
 function applyLanguage() {
-    // 자동 설정된 언어(t)를 화면에 뿌림
     btnInstall.innerText = t.install;
     
     // 타이머
@@ -145,7 +141,7 @@ function applyLanguage() {
 
 
 // ==========================================
-// 4. 기능 로직 (스티커, 카메라 등)
+// 4. 스티커 로직 (멀티/선택/삭제/크기)
 // ==========================================
 function initStickers() {
     stickerBar.innerHTML = '';
@@ -184,6 +180,10 @@ stickerSizeRange.addEventListener('input', () => {
     if (activeSticker) activeSticker.style.fontSize = `${stickerSizeRange.value}px`;
 });
 
+
+// ==========================================
+// 5. 카메라 및 기본 기능
+// ==========================================
 async function initCamera() {
     if (video.srcObject) { const tracks = video.srcObject.getTracks(); tracks.forEach(track => track.stop()); }
     try {
@@ -201,20 +201,20 @@ btnSwitch.addEventListener('click', () => {
 function checkConnection() {
     if (navigator.onLine) {
         statusText.innerText = t.online; btnPremium.disabled = false; btnFrame.disabled = false;
-        if(isPremiumMode) { /* 텍스트 유지 */ }
     } else {
         statusText.innerText = t.offline; btnPremium.disabled = true; btnFrame.disabled = true;
         if(isPremiumMode) { isPremiumMode = false; togglePremiumUI(false); frameIndex=0; updateFrameUI(); }
     }
 }
 
-// 기능 버튼 이벤트
+// 타이머
 btnTimer.addEventListener('click', () => {
     if (timerState === 0) timerState = 3; else if (timerState === 3) timerState = 5; else if (timerState === 5) timerState = 10; else timerState = 0;
     if (timerState === 0) btnTimer.classList.remove('on-mode'); else btnTimer.classList.add('on-mode');
     applyLanguage();
 });
 
+// 레트로
 btnRetro.addEventListener('click', () => {
     isRetroOn = !isRetroOn; btnRetro.classList.toggle('on-mode');
     if (isRetroOn) { updateRetroDate(); retroDateEl.classList.remove('hidden'); } else { retroDateEl.classList.add('hidden'); }
@@ -224,12 +224,12 @@ function getRetroString() { const now = new Date(); return `${now.getFullYear()}
 function updateRetroDate() { retroDateEl.innerText = getRetroString(); }
 setInterval(() => { if (isRetroOn) updateRetroDate(); }, 1000);
 
+// 프레임
 btnFrame.addEventListener('click', () => {
     if (!navigator.onLine) { alert(t.alertNet); return; }
     if (!isPremiumMode) { document.getElementById('ad-modal').classList.remove('hidden'); return; }
     frameIndex = (frameIndex + 1) % frameStyles.length; updateFrameUI();
 });
-
 function updateFrameUI() {
     const style = frameStyles[frameIndex];
     frameOverlay.style.border = 'none'; frameOverlay.className = ''; 
@@ -243,6 +243,7 @@ function updateFrameUI() {
     applyLanguage();
 }
 
+// 프리미엄/광고
 btnPremium.addEventListener('click', () => {
     if (!navigator.onLine) { alert(t.alertNet); return; }
     if (!isPremiumMode) document.getElementById('ad-modal').classList.remove('hidden');
@@ -250,37 +251,66 @@ btnPremium.addEventListener('click', () => {
 });
 
 btnCloseAd.addEventListener('click', () => {
-    document.getElementById('ad-modal').classList.add('hidden'); isPremiumMode = true; alert(t.alertPremium);
+    document.getElementById('ad-modal').classList.add('hidden'); 
+    isPremiumMode = true; 
+    alert(t.alertPremium);
     togglePremiumUI(true); 
     applyLanguage();
 });
 
 function togglePremiumUI(show) {
-    if (show) { stickerBar.classList.remove('hidden'); stickerLayer.classList.remove('hidden'); btnPremium.classList.add('premium-active'); }
-    else { stickerBar.classList.add('hidden'); stickerLayer.classList.add('hidden'); stickerEditBox.classList.add('hidden'); btnPremium.classList.remove('premium-active'); }
+    if (show) { 
+        stickerBar.classList.remove('hidden'); 
+        stickerLayer.classList.remove('hidden'); 
+        btnPremium.classList.add('premium-active'); 
+    } else { 
+        stickerBar.classList.add('hidden'); 
+        stickerLayer.classList.add('hidden'); 
+        stickerEditBox.classList.add('hidden'); 
+        btnPremium.classList.remove('premium-active'); 
+    }
     applyLanguage();
 }
 
+// 뷰티 모드 (필터)
 const beautySliderBox = document.getElementById('beauty-slider-box');
 const beautyRange = document.getElementById('beauty-range');
+
+// [개선된 뽀샤시 필터 로직]
 function applyFilter() {
     if (isBeautyMode) {
-        const level = beautyRange.value; const b = 1 + (level * 0.002); const bl = level * 0.02; const s = 1 + (level * 0.001);
-        video.style.filter = `brightness(${b}) blur(${bl}px) saturate(${s})`; return video.style.filter;
-    } else { video.style.filter = 'none'; return 'none'; }
+        const val = beautyRange.value / 100;
+        const b = 1 + (val * 0.3);      // 밝기
+        const s = 1 + (val * 0.3);      // 생기(채도)
+        const c = 1 - (val * 0.1);      // 부드러움(대비 감소)
+        const bl = val * 1.0;           // 피부결 정돈(블러)
+        const sep = val * 0.1;          // 웜톤(세피아)
+        const filterStr = `brightness(${b}) saturate(${s}) contrast(${c}) blur(${bl}px) sepia(${sep})`;
+        video.style.filter = filterStr;
+        return filterStr;
+    } else { 
+        video.style.filter = 'none'; 
+        return 'none'; 
+    }
 }
+
 btnBeauty.addEventListener('click', () => {
-    isBeautyMode = !isBeautyMode; btnBeauty.classList.toggle('active-btn');
-    isBeautyMode ? beautySliderBox.classList.remove('hidden') : beautySliderBox.classList.add('hidden'); applyFilter();
+    isBeautyMode = !isBeautyMode; 
+    btnBeauty.classList.toggle('active-btn'); 
+    isBeautyMode ? beautySliderBox.classList.remove('hidden') : beautySliderBox.classList.add('hidden'); 
+    applyFilter();
     applyLanguage();
 });
 beautyRange.addEventListener('input', () => { if (isBeautyMode) applyFilter(); });
 
 
-// 스티커 드래그
+// ==========================================
+// 6. 스티커 드래그 핸들러
+// ==========================================
 let isDrag=false, sX, sY, iL, iT, currentDragEl=null;
 function handleStickerStart(e) {
-    if(!isPremiumMode) return; e.preventDefault(); currentDragEl=e.target; selectSticker(currentDragEl);
+    if(!isPremiumMode) return; e.preventDefault(); 
+    currentDragEl=e.target; selectSticker(currentDragEl);
     isDrag=true; sX=e.touches?e.touches[0].clientX:e.clientX; sY=e.touches?e.touches[0].clientY:e.clientY;
     const r=currentDragEl.getBoundingClientRect(), p=stickerLayer.getBoundingClientRect();
     iL=r.left-p.left+(r.width/2); iT=r.top-p.top+(r.height/2);
@@ -292,10 +322,16 @@ function handleStickerMove(e) {
     let cX=e.touches?e.touches[0].clientX:e.clientX, cY=e.touches?e.touches[0].clientY:e.clientY;
     currentDragEl.style.left=`${iL+(cX-sX)}px`; currentDragEl.style.top=`${iT+(cY-sY)}px`;
 }
-function handleStickerEnd() { isDrag=false; currentDragEl=null; document.removeEventListener('touchmove',handleStickerMove); document.removeEventListener('mousemove',handleStickerMove); document.removeEventListener('touchend',handleStickerEnd); document.removeEventListener('mouseup',handleStickerEnd); }
+function handleStickerEnd() { 
+    isDrag=false; currentDragEl=null; 
+    document.removeEventListener('touchmove',handleStickerMove); document.removeEventListener('mousemove',handleStickerMove); 
+    document.removeEventListener('touchend',handleStickerEnd); document.removeEventListener('mouseup',handleStickerEnd); 
+}
 
 
-// 셔터 및 저장
+// ==========================================
+// 7. 셔터 및 저장
+// ==========================================
 btnShutter.addEventListener('click', () => {
     if(activeSticker) activeSticker.classList.remove('sticker-selected');
     if (timerState > 0) {
@@ -311,17 +347,21 @@ function takePhoto() {
     const ctx = canvas.getContext('2d');
     const vw = video.videoWidth; const vh = video.videoHeight;
     canvas.width = vw; canvas.height = vh;
+
+    // 1. 비디오
     if (facingMode === 'user') { ctx.translate(vw, 0); ctx.scale(-1, 1); }
     ctx.filter = isBeautyMode ? applyFilter() : 'none';
     ctx.drawImage(video, 0, 0, vw, vh); ctx.filter = 'none';
 
+    // 2. 프레임
     const style = frameStyles[frameIndex];
-    if (facingMode === 'user') { ctx.scale(-1, 1); ctx.translate(-vw, 0); }
+    if (facingMode === 'user') { ctx.scale(-1, 1); ctx.translate(-vw, 0); } // 좌표 원복
 
     if (style.type === 'color') { ctx.strokeStyle = style.val; ctx.lineWidth = 40; ctx.strokeRect(20, 20, vw-40, vh-40); }
     else if (style.type === 'film') { ctx.fillStyle = 'black'; const sW=60; ctx.fillRect(0,0,sW,vh); ctx.fillRect(vw-sW,0,sW,vh); ctx.fillStyle='white'; const hH=30, gap=20; for(let y=20; y<vh; y+=(hH+gap)){ ctx.fillRect(15,y,30,hH); ctx.fillRect(vw-45,y,30,hH); } }
     else if (style.type === 'rainbow') { const g=ctx.createLinearGradient(0,0,vw,vh); g.addColorStop(0,"red"); g.addColorStop(0.2,"orange"); g.addColorStop(0.4,"yellow"); g.addColorStop(0.6,"green"); g.addColorStop(0.8,"blue"); g.addColorStop(1,"violet"); ctx.strokeStyle=g; ctx.lineWidth=40; ctx.strokeRect(20,20,vw-40,vh-40); }
 
+    // 3. 스티커
     if (isPremiumMode && !stickerLayer.classList.contains('hidden')) {
         const stickers = document.querySelectorAll('.sticker-item');
         const wrapRect = document.getElementById('camera-wrap').getBoundingClientRect();
@@ -338,6 +378,7 @@ function takePhoto() {
         });
     }
 
+    // 4. 레트로 날짜
     if (isRetroOn) {
         const dStr = getRetroString();
         ctx.font = `bold ${vw * 0.05}px 'Courier New', monospace`; ctx.fillStyle = "#ffaa00"; ctx.textAlign = "right"; ctx.shadowColor = "rgba(0,0,0,0.8)"; ctx.shadowBlur = 4;
@@ -351,7 +392,9 @@ function takePhoto() {
     if(activeSticker) activeSticker.classList.add('sticker-selected');
 }
 
-// PWA 설치 로직
+// ==========================================
+// 8. PWA 설치 로직
+// ==========================================
 let deferredPrompt;
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault(); deferredPrompt = e;
@@ -366,9 +409,9 @@ btnInstall.addEventListener('click', async () => {
 });
 if (window.matchMedia('(display-mode: standalone)').matches) btnInstall.classList.add('hidden');
 
+
 // 실행
-initStickers(); 
-applyLanguage(); // 시작할 때 자동 감지된 언어로 텍스트 적용
+initStickers(); applyLanguage();
 window.addEventListener('online', checkConnection);
 window.addEventListener('offline', checkConnection);
 initCamera(); checkConnection();
