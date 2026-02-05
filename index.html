@@ -13,6 +13,8 @@
     <div id="mobile-frame">
         
         <div id="top-bar">
+            <button id="btn-install" class="icon-btn hidden" style="background:#ff4757; font-weight:bold;">⬇️ 앱 설치</button>
+            
             <button id="btn-timer" class="icon-btn"></button>
             <button id="btn-retro" class="icon-btn"></button>
             <button id="btn-frame" class="icon-btn" disabled></button>
@@ -20,13 +22,9 @@
 
         <div id="camera-wrap">
             <video id="video" autoplay playsinline muted></video>
-            
-            <div id="retro-date" class="hidden"></div>
-
-            <div id="sticker-layer" class="hidden"></div>
-            
             <div id="frame-overlay"></div>
-            
+            <div id="retro-date" class="hidden"></div>
+            <div id="sticker-layer" class="hidden"></div>
             <div id="timer-display" class="hidden"></div>
             <canvas id="canvas" style="display:none;"></canvas>
         </div>
@@ -43,8 +41,7 @@
                 <button id="btn-delete-sticker">🗑️</button>
             </div>
 
-            <div id="sticker-bar" class="hidden">
-                </div>
+            <div id="sticker-bar" class="hidden"></div>
             
             <div class="options">
                 <button id="btn-beauty" class="opt-btn">✨ Beauty</button>
