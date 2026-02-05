@@ -2,7 +2,7 @@
   "name": "Yeppeun Camera",
   "short_name": "Yeppeun Camera",
   "description": "필터와 스티커 기능이 있는 무료 웹 카메라",
-  "start_url": "./index.html",
+  "start_url": ".",
   "display": "standalone",
   "orientation": "portrait", 
   "background_color": "#000000",
