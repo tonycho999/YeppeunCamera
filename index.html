@@ -42,8 +42,22 @@
         <div id="controls">
             
             <div id="beauty-slider-box" class="hidden">
-                <span id="txt-intensity">Intensity: </span>
-                <input type="range" id="beauty-range" min="0" max="100" value="50">
+                <div class="slider-row">
+                    <span>💡</span> 
+                    <input type="range" id="range-bright" min="100" max="150" value="110">
+                </div>
+                <div class="slider-row">
+                    <span>🩸</span> 
+                    <input type="range" id="range-color" min="100" max="150" value="110">
+                </div>
+                <div class="slider-row">
+                    <span>🧡</span> 
+                    <input type="range" id="range-warm" min="0" max="50" value="10">
+                </div>
+                <div class="slider-row">
+                    <span>💧</span> 
+                    <input type="range" id="range-soft" min="0" max="30" value="10">
+                </div>
             </div>
 
             <div id="sticker-edit-box" class="hidden">
