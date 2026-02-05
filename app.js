@@ -1,4 +1,4 @@
-// ==========================================
+/ ==========================================
 // 1. 다국어 설정 (i18n)
 // ==========================================
 const translations = {
@@ -7,7 +7,7 @@ const translations = {
         retroOff: "🎞️ 레트로 OFF", retroOn: "🎞️ 레트로 ON",
         frameOff: "🖼️ 프레임 OFF", frameChange: "🖼️ 프레임 변경", framePaid: "🖼️ 프레임(유료)",
         online: "🟢 온라인 (프리미엄 가능)", offline: "🔴 오프라인 (기본 기능만)",
-        beauty: "✨ 뽀샤시", beautyOn: "✨ 뽀샤시 ON", 
+        beauty: "✨ 뽀샤시", beautyOn: "✨ 뽀샤시 ON", intensity: "강도:",
         premium: "🎨 꾸미기(유료)", premiumOn: "🎨 꾸미기 ON",
         adTitle: "잠깐! 🖐️", adDesc: "광고를 닫으면<br>스티커 & 프레임이 열립니다!",
         adClose: "광고 닫고 사용하기", alertNet: "인터넷 연결이 필요합니다!",
@@ -19,20 +19,44 @@ const translations = {
         retroOff: "🎞️ Retro OFF", retroOn: "🎞️ Retro ON",
         frameOff: "🖼️ Frame OFF", frameChange: "🖼️ Change Frame", framePaid: "🖼️ Frame(Paid)",
         online: "🟢 Online", offline: "🔴 Offline",
-        beauty: "✨ Beauty", beautyOn: "✨ Beauty ON",
+        beauty: "✨ Beauty", beautyOn: "✨ Beauty ON", intensity: "Level:",
         premium: "🎨 Premium", premiumOn: "🎨 Premium ON",
         adTitle: "Wait! 🖐️", adDesc: "Watch ad to unlock<br>Stickers & Frames!",
         adClose: "Close & Unlock", alertNet: "Internet connection required!",
         alertPremium: "Premium features activated!",
         install: "⬇️ Install"
     },
-    // (ja, zh 생략 - 위와 구조 동일, 자동 감지 로직)
-    ja: { timerOff: "⏱️ OFF", beauty: "✨ 美肌", beautyOn: "✨ 美肌 ON", install: "⬇️ アプリ" }, 
-    zh: { timerOff: "⏱️ OFF", beauty: "✨ 美颜", beautyOn: "✨ 美颜 ON", install: "⬇️ 下载" }
+    ja: {
+        timerOff: "⏱️ OFF", timer3: "⏱️ 3秒", timer5: "⏱️ 5秒", timer10: "⏱️ 10秒",
+        retroOff: "🎞️ レトロ OFF", retroOn: "🎞️ レトロ ON",
+        frameOff: "🖼️ 枠なし", frameChange: "🖼️ 枠変更", framePaid: "🖼️ フレーム(有料)",
+        online: "🟢 オンライン", offline: "🔴 オフライン",
+        beauty: "✨ 美肌", beautyOn: "✨ 美肌 ON", intensity: "強度:",
+        premium: "🎨 デコ(有料)", premiumOn: "🎨 デコ ON",
+        adTitle: "ちょっと待って! 🖐️", adDesc: "広告を見ると<br>スタンプと枠が使えます!",
+        adClose: "閉じて使う", alertNet: "インターネット接続が必要です!",
+        alertPremium: "プレミアムモード解除!",
+        install: "⬇️ アプリ"
+    },
+    zh: {
+        timerOff: "⏱️ OFF", timer3: "⏱️ 3秒", timer5: "⏱️ 5秒", timer10: "⏱️ 10秒",
+        retroOff: "🎞️ 复古 OFF", retroOn: "🎞️ 复古 ON",
+        frameOff: "🖼️ 无边框", frameChange: "🖼️ 更换边框", framePaid: "🖼️ 边框(付费)",
+        online: "🟢 在线", offline: "🔴 离线",
+        beauty: "✨ 美颜", beautyOn: "✨ 美颜 ON", intensity: "强度:",
+        premium: "🎨 装饰(付费)", premiumOn: "🎨 装饰 ON",
+        adTitle: "等等! 🖐️", adDesc: "观看广告以解锁<br>贴纸和边框!",
+        adClose: "关闭广告并使用", alertNet: "需要网络连接!",
+        alertPremium: "高级模式已解锁!",
+        install: "⬇️ 下载"
+    }
 };
 
+
+// 브라우저 언어 자동 감지
 const browserLang = navigator.language.slice(0, 2);
 const t = translations[browserLang] || translations['en'];
+
 
 // ==========================================
 // 2. 요소 설정
@@ -55,13 +79,14 @@ const btnShutter = document.getElementById('btn-shutter');
 const btnSwitch = document.getElementById('btn-switch');
 const btnCloseAd = document.getElementById('btn-close-ad');
 
-// [NEW] 4개의 상세 조절 슬라이더
+// 뷰티 슬라이더
 const beautySliderBox = document.getElementById('beauty-slider-box');
-const rangeBright = document.getElementById('range-bright'); // 밝기
-const rangeColor = document.getElementById('range-color');   // 생기(채도)
-const rangeWarm = document.getElementById('range-warm');     // 따뜻함(세피아)
-const rangeSoft = document.getElementById('range-soft');     // 물광(블러)
+const rangeBright = document.getElementById('range-bright');
+const rangeColor = document.getElementById('range-color');
+const rangeWarm = document.getElementById('range-warm');
+const rangeSoft = document.getElementById('range-soft');
 
+// 스티커 도구
 const stickerBar = document.getElementById('sticker-bar');
 const stickerEditBox = document.getElementById('sticker-edit-box');
 const stickerSizeRange = document.getElementById('sticker-size-range');
@@ -72,6 +97,10 @@ let isPremiumMode = false;
 let isRetroOn = false;
 let timerState = 0; 
 let facingMode = 'user';
+
+// [NEW] 메뉴 열림 상태 관리 변수
+let isBeautyMenuOpen = false;
+let isStickerMenuOpen = false;
 
 const frameStyles = [
     { type: 'none', css: '' },
@@ -84,32 +113,57 @@ const frameStyles = [
 let frameIndex = 0;
 let activeSticker = null;
 
+
 // ==========================================
-// 3. 초기화 & 언어
+// 3. 초기화 (언어 적용 함수)
 // ==========================================
 function applyLanguage() {
-    btnInstall.innerText = t.install || "⬇️ App";
+    btnInstall.innerText = t.install;
+    
+    // 타이머
     let timerLabel = t.timerOff;
-    if (timerState === 3) timerLabel = t.timer3 || "3s";
-    if (timerState === 5) timerLabel = t.timer5 || "5s";
-    if (timerState === 10) timerLabel = t.timer10 || "10s";
+    if (timerState === 3) timerLabel = t.timer3;
+    if (timerState === 5) timerLabel = t.timer5;
+    if (timerState === 10) timerLabel = t.timer10;
     btnTimer.innerText = timerLabel;
     
-    btnRetro.innerText = isRetroOn ? (t.retroOn || "Retro ON") : (t.retroOff || "Retro OFF");
+    // 레트로
+    btnRetro.innerText = isRetroOn ? t.retroOn : t.retroOff;
     
-    if (!isPremiumMode) btnFrame.innerText = t.framePaid || "Frame(Paid)";
-    else btnFrame.innerText = (frameStyles[frameIndex].type === 'none') ? (t.frameOff||"Frame OFF") : (t.frameChange||"Change");
+    // 프레임 (프레임은 버튼 자체가 변경 기능이라 완료 버튼 없음)
+    if (!isPremiumMode) {
+        btnFrame.innerText = t.framePaid;
+    } else {
+        const style = frameStyles[frameIndex];
+        btnFrame.innerText = (style.type === 'none') ? t.frameOff : t.frameChange;
+    }
     
-    btnBeauty.innerText = isBeautyMode ? (t.beautyOn||"Beauty ON") : (t.beauty||"Beauty");
-    btnPremium.innerText = isPremiumMode ? (t.premiumOn||"Deco ON") : (t.premium||"Deco");
+    // [수정] 뷰티 버튼 텍스트 (메뉴 열려있으면 '완료', 아니면 'ON/OFF')
+    if (isBeautyMenuOpen) {
+        btnBeauty.innerText = t.done;
+    } else {
+        btnBeauty.innerText = isBeautyMode ? t.beautyOn : t.beauty;
+    }
     
-    if(t.adTitle) document.getElementById('txt-ad-title').innerText = t.adTitle;
-    if(t.adDesc) document.getElementById('txt-ad-desc').innerHTML = t.adDesc;
-    if(t.adClose) document.getElementById('btn-close-ad').innerText = t.adClose;
+    // [수정] 프리미엄(꾸미기) 버튼 텍스트 (메뉴 열려있으면 '완료', 아니면 'ON/OFF')
+    if (isStickerMenuOpen) {
+        btnPremium.innerText = t.done;
+    } else {
+        btnPremium.innerText = isPremiumMode ? t.premiumOn : t.premium;
+    }
     
-    statusText.innerText = navigator.onLine ? (t.online||"Online") : (t.offline||"Offline");
+    // 기타
+    document.getElementById('txt-intensity').innerText = t.intensity;
+    document.getElementById('txt-ad-title').innerText = t.adTitle;
+    document.getElementById('txt-ad-desc').innerHTML = t.adDesc;
+    document.getElementById('btn-close-ad').innerText = t.adClose;
+    statusText.innerText = navigator.onLine ? t.online : t.offline;
 }
 
+
+// ==========================================
+// 4. 스티커 기능 (멀티/선택/삭제/크기)
+// ==========================================
 function initStickers() {
     stickerBar.innerHTML = '';
     if (typeof stickerList !== 'undefined') {
@@ -122,56 +176,6 @@ function initStickers() {
     }
 }
 
-// ==========================================
-// 4. [핵심] 상세 뷰티 필터 로직
-// ==========================================
-function applyFilter() {
-    if (isBeautyMode) {
-        // 1. 밝기 (100 ~ 150) -> 1.0 ~ 1.5
-        const brightness = rangeBright.value / 100;
-        
-        // 2. 생기/채도 (100 ~ 150) -> 1.0 ~ 1.5
-        const saturate = rangeColor.value / 100;
-        
-        // 3. 따뜻함/세피아 (0 ~ 50) -> 0.0 ~ 0.5
-        const sepia = rangeWarm.value / 100;
-        
-        // 4. 물광/블러 (0 ~ 30) -> 0px ~ 3px (나누기 10)
-        const blur = rangeSoft.value / 10;
-
-        // 필터 조합 문자열
-        const filterStr = `brightness(${brightness}) saturate(${saturate}) sepia(${sepia}) blur(${blur}px)`;
-        
-        video.style.filter = filterStr;
-        return filterStr;
-    } else {
-        video.style.filter = 'none';
-        return 'none';
-    }
-}
-
-// 4개의 슬라이더 모두에 이벤트 리스너 연결
-[rangeBright, rangeColor, rangeWarm, rangeSoft].forEach(range => {
-    range.addEventListener('input', applyFilter);
-});
-
-btnBeauty.addEventListener('click', () => {
-    isBeautyMode = !isBeautyMode;
-    btnBeauty.classList.toggle('active-btn');
-    if (isBeautyMode) {
-        beautySliderBox.classList.remove('hidden');
-        applyFilter(); // 켜자마자 현재 슬라이더 값 적용
-    } else {
-        beautySliderBox.classList.add('hidden');
-        applyFilter(); // 끄기
-    }
-    applyLanguage();
-});
-
-
-// ==========================================
-// 5. 나머지 기능 (스티커, 카메라, 저장 등)
-// ==========================================
 function addSticker(text) {
     const el = document.createElement('div');
     el.className = 'sticker-item'; el.innerText = text; el.style.fontSize = "100px";
@@ -180,17 +184,135 @@ function addSticker(text) {
     el.addEventListener('touchstart', handleStickerStart, {passive: false});
     stickerLayer.appendChild(el); selectSticker(el);
 }
+
 function selectSticker(el) {
+    // 메뉴가 닫혀있다면 강제로 켬 (편집을 위해)
+    if (!isStickerMenuOpen) {
+        openStickerMenu();
+    }
     if (activeSticker) activeSticker.classList.remove('sticker-selected');
     activeSticker = el; activeSticker.classList.add('sticker-selected');
     stickerSizeRange.value = parseInt(activeSticker.style.fontSize);
     stickerEditBox.classList.remove('hidden');
 }
+
 btnDeleteSticker.addEventListener('click', () => {
     if (activeSticker) { activeSticker.remove(); activeSticker = null; stickerEditBox.classList.add('hidden'); }
 });
-stickerSizeRange.addEventListener('input', () => { if (activeSticker) activeSticker.style.fontSize = `${stickerSizeRange.value}px`; });
+stickerSizeRange.addEventListener('input', () => {
+    if (activeSticker) activeSticker.style.fontSize = `${stickerSizeRange.value}px`;
+});
 
+
+// ==========================================
+// 5. [핵심] 뷰티(뽀샤시) 필터 로직
+// ==========================================
+function applyFilter() {
+    // isBeautyMode가 켜져있으면 슬라이더 값 적용
+    if (isBeautyMode) {
+        const brightness = rangeBright.value / 100;
+        const saturate = rangeColor.value / 100;
+        const sepia = rangeWarm.value / 100;
+        const blur = rangeSoft.value / 10;
+        const filterStr = `brightness(${brightness}) saturate(${saturate}) sepia(${sepia}) blur(${blur}px)`;
+        video.style.filter = filterStr;
+    } else {
+        video.style.filter = 'none';
+    }
+}
+
+// [수정] 뷰티 버튼 클릭 이벤트
+btnBeauty.addEventListener('click', () => {
+    if (isBeautyMenuOpen) {
+        // [완료 버튼 눌렀을 때]
+        // 메뉴만 닫고, 필터 효과(isBeautyMode)는 그대로 유지
+        isBeautyMenuOpen = false;
+        beautySliderBox.classList.add('hidden');
+        btnBeauty.classList.remove('active-btn'); // 완료했으니 하이라이트 끔 (취향따라 유지 가능)
+        
+        // 하지만 필터가 적용 중임을 알리기 위해 텍스트는 ON으로
+        if(isBeautyMode) btnBeauty.classList.add('on-mode'); 
+    } else {
+        // [설정 열기]
+        isBeautyMenuOpen = true;
+        isBeautyMode = true; // 메뉴 열면 자동으로 필터 켜짐
+        beautySliderBox.classList.remove('hidden');
+        btnBeauty.classList.add('active-btn');
+        btnBeauty.classList.remove('on-mode');
+        applyFilter();
+    }
+    applyLanguage(); // 버튼 텍스트 갱신 (Beauty <-> Done)
+});
+
+// 슬라이더 조절 시 실시간 반영
+[rangeBright, rangeColor, rangeWarm, rangeSoft].forEach(range => {
+    range.addEventListener('input', applyFilter);
+});
+
+
+// ==========================================
+// 6. [핵심] 프리미엄(꾸미기) 메뉴 로직
+// ==========================================
+function openStickerMenu() {
+    isStickerMenuOpen = true;
+    stickerBar.classList.remove('hidden');
+    // 편집 박스는 선택된 게 있을 때만 보임
+    if(activeSticker) stickerEditBox.classList.remove('hidden');
+    
+    stickerLayer.classList.remove('hidden'); // 레이어 보이기
+    btnPremium.classList.add('active-btn');
+    btnPremium.classList.remove('on-mode');
+    applyLanguage();
+}
+
+function closeStickerMenu() {
+    isStickerMenuOpen = false;
+    stickerBar.classList.add('hidden');
+    stickerEditBox.classList.add('hidden');
+    
+    // [중요] 레이어는 숨기지 않음! (스티커가 계속 보여야 하니까)
+    btnPremium.classList.remove('active-btn');
+    
+    // 적용된 상태 표시
+    if (isPremiumMode) btnPremium.classList.add('on-mode');
+    
+    // 선택 테두리 제거 (완료했으니까)
+    if(activeSticker) activeSticker.classList.remove('sticker-selected');
+    
+    applyLanguage();
+}
+
+btnPremium.addEventListener('click', () => {
+    if (!navigator.onLine) { alert(t.alertNet); return; }
+    
+    // 광고 아직 안 봤으면 광고 띄우기
+    if (!isPremiumMode) {
+        document.getElementById('ad-modal').classList.remove('hidden');
+        return;
+    }
+    
+    // 광고 봤으면 메뉴 토글
+    if (isStickerMenuOpen) {
+        closeStickerMenu(); // 완료 누름
+    } else {
+        openStickerMenu(); // 꾸미기 누름
+    }
+});
+
+// 광고 닫기 완료
+btnCloseAd.addEventListener('click', () => {
+    document.getElementById('ad-modal').classList.add('hidden'); 
+    isPremiumMode = true; 
+    alert(t.alertPremium);
+    
+    // 광고 보고 나면 바로 꾸미기 메뉴 열어줌
+    openStickerMenu();
+});
+
+
+// ==========================================
+// 7. 기타 기능 (카메라, 프레임, 타이머)
+// ==========================================
 async function initCamera() {
     if (video.srcObject) { const tracks = video.srcObject.getTracks(); tracks.forEach(track => track.stop()); }
     try {
@@ -205,8 +327,8 @@ btnSwitch.addEventListener('click', () => {
     initCamera();
 });
 function checkConnection() {
-    if (navigator.onLine) { statusText.innerText = (t.online||"Online"); btnPremium.disabled = false; btnFrame.disabled = false; }
-    else { statusText.innerText = (t.offline||"Offline"); btnPremium.disabled = true; btnFrame.disabled = true; if(isPremiumMode) { isPremiumMode=false; togglePremiumUI(false); frameIndex=0; updateFrameUI(); } }
+    if (navigator.onLine) { statusText.innerText = t.online; btnPremium.disabled = false; btnFrame.disabled = false; }
+    else { statusText.innerText = t.offline; btnPremium.disabled = true; btnFrame.disabled = true; if(isPremiumMode) { isPremiumMode=false; closeStickerMenu(); frameIndex=0; updateFrameUI(); } }
 }
 
 btnTimer.addEventListener('click', () => {
@@ -214,6 +336,7 @@ btnTimer.addEventListener('click', () => {
     if (timerState === 0) btnTimer.classList.remove('on-mode'); else btnTimer.classList.add('on-mode');
     applyLanguage();
 });
+
 btnRetro.addEventListener('click', () => {
     isRetroOn = !isRetroOn; btnRetro.classList.toggle('on-mode');
     if (isRetroOn) { updateRetroDate(); retroDateEl.classList.remove('hidden'); } else { retroDateEl.classList.add('hidden'); }
@@ -224,9 +347,12 @@ function updateRetroDate() { retroDateEl.innerText = getRetroString(); }
 setInterval(() => { if (isRetroOn) updateRetroDate(); }, 1000);
 
 btnFrame.addEventListener('click', () => {
-    if (!navigator.onLine) { alert(t.alertNet||"Check Internet"); return; }
+    if (!navigator.onLine) { alert(t.alertNet); return; }
     if (!isPremiumMode) { document.getElementById('ad-modal').classList.remove('hidden'); return; }
-    frameIndex = (frameIndex + 1) % frameStyles.length; updateFrameUI();
+    
+    // 프레임은 '완료' 개념이 없으므로(색상 변경 버튼이므로) 기존 방식 유지
+    frameIndex = (frameIndex + 1) % frameStyles.length; 
+    updateFrameUI();
 });
 function updateFrameUI() {
     const style = frameStyles[frameIndex];
@@ -240,27 +366,16 @@ function updateFrameUI() {
     }
     applyLanguage();
 }
-btnPremium.addEventListener('click', () => {
-    if (!navigator.onLine) { alert(t.alertNet||"Check Internet"); return; }
-    if (!isPremiumMode) document.getElementById('ad-modal').classList.remove('hidden');
-    else togglePremiumUI(stickerBar.classList.contains('hidden'));
-});
-btnCloseAd.addEventListener('click', () => {
-    document.getElementById('ad-modal').classList.add('hidden'); isPremiumMode = true; alert(t.alertPremium||"Unlocked!");
-    togglePremiumUI(true); applyLanguage();
-});
-function togglePremiumUI(show) {
-    if (show) { stickerBar.classList.remove('hidden'); stickerLayer.classList.remove('hidden'); btnPremium.classList.add('premium-active'); }
-    else { stickerBar.classList.add('hidden'); stickerLayer.classList.add('hidden'); stickerEditBox.classList.add('hidden'); btnPremium.classList.remove('premium-active'); }
-    applyLanguage();
-}
 
+// 스티커 드래그
 let isDrag=false, sX, sY, iL, iT, currentDragEl=null;
 function handleStickerStart(e) { if(!isPremiumMode) return; e.preventDefault(); currentDragEl=e.target; selectSticker(currentDragEl); isDrag=true; sX=e.touches?e.touches[0].clientX:e.clientX; sY=e.touches?e.touches[0].clientY:e.clientY; const r=currentDragEl.getBoundingClientRect(), p=stickerLayer.getBoundingClientRect(); iL=r.left-p.left+(r.width/2); iT=r.top-p.top+(r.height/2); document.addEventListener('touchmove',handleStickerMove,{passive:false}); document.addEventListener('mousemove',handleStickerMove); document.addEventListener('touchend',handleStickerEnd); document.addEventListener('mouseup',handleStickerEnd); }
 function handleStickerMove(e) { if(!isDrag||!currentDragEl) return; e.preventDefault(); let cX=e.touches?e.touches[0].clientX:e.clientX, cY=e.touches?e.touches[0].clientY:e.clientY; currentDragEl.style.left=`${iL+(cX-sX)}px`; currentDragEl.style.top=`${iT+(cY-sY)}px`; }
 function handleStickerEnd() { isDrag=false; currentDragEl=null; document.removeEventListener('touchmove',handleStickerMove); document.removeEventListener('mousemove',handleStickerMove); document.removeEventListener('touchend',handleStickerEnd); document.removeEventListener('mouseup',handleStickerEnd); }
 
+// 셔터
 btnShutter.addEventListener('click', () => {
+    // 사진 찍을 땐 선택 테두리 제거
     if(activeSticker) activeSticker.classList.remove('sticker-selected');
     if (timerState > 0) {
         let count = timerState; timerDisplay.innerText = count; timerDisplay.classList.remove('hidden');
@@ -275,16 +390,21 @@ function takePhoto() {
     const ctx = canvas.getContext('2d');
     const vw = video.videoWidth; const vh = video.videoHeight;
     canvas.width = vw; canvas.height = vh;
+
+    // 1. 비디오
     if (facingMode === 'user') { ctx.translate(vw, 0); ctx.scale(-1, 1); }
-    ctx.filter = isBeautyMode ? applyFilter() : 'none';
+    // 필터 적용 상태에서 그리기
+    ctx.filter = isBeautyMode ? `brightness(${rangeBright.value/100}) saturate(${rangeColor.value/100}) sepia(${rangeWarm.value/100}) blur(${rangeSoft.value/10}px)` : 'none';
     ctx.drawImage(video, 0, 0, vw, vh); ctx.filter = 'none';
 
+    // 2. 프레임
     const style = frameStyles[frameIndex];
     if (facingMode === 'user') { ctx.scale(-1, 1); ctx.translate(-vw, 0); }
     if (style.type === 'color') { ctx.strokeStyle = style.val; ctx.lineWidth = 40; ctx.strokeRect(20, 20, vw-40, vh-40); }
     else if (style.type === 'film') { ctx.fillStyle = 'black'; const sW=60; ctx.fillRect(0,0,sW,vh); ctx.fillRect(vw-sW,0,sW,vh); ctx.fillStyle='white'; const hH=30, gap=20; for(let y=20; y<vh; y+=(hH+gap)){ ctx.fillRect(15,y,30,hH); ctx.fillRect(vw-45,y,30,hH); } }
     else if (style.type === 'rainbow') { const g=ctx.createLinearGradient(0,0,vw,vh); g.addColorStop(0,"red"); g.addColorStop(0.2,"orange"); g.addColorStop(0.4,"yellow"); g.addColorStop(0.6,"green"); g.addColorStop(0.8,"blue"); g.addColorStop(1,"violet"); ctx.strokeStyle=g; ctx.lineWidth=40; ctx.strokeRect(20,20,vw-40,vh-40); }
 
+    // 3. 스티커
     if (isPremiumMode && !stickerLayer.classList.contains('hidden')) {
         const stickers = document.querySelectorAll('.sticker-item');
         const wrapRect = document.getElementById('camera-wrap').getBoundingClientRect();
@@ -300,16 +420,22 @@ function takePhoto() {
             ctx.fillText(el.innerText, canvasX, canvasY);
         });
     }
+
+    // 4. 레트로 날짜
     if (isRetroOn) {
         const dStr = getRetroString();
         ctx.font = `bold ${vw * 0.05}px 'Courier New', monospace`; ctx.fillStyle = "#ffaa00"; ctx.textAlign = "right"; ctx.shadowColor = "rgba(0,0,0,0.8)"; ctx.shadowBlur = 4;
         const pX = (style.type === 'film') ? 80 : 50; ctx.fillText(dStr, vw - pX, vh - 50);
     }
+
     const link = document.createElement('a'); link.download = `smartcam_${Date.now()}.png`;
     link.href = canvas.toDataURL('image/png'); link.click();
-    if(activeSticker) activeSticker.classList.add('sticker-selected');
+    
+    // 사진 찍고 나서 선택 상태 복구
+    if(activeSticker && isStickerMenuOpen) activeSticker.classList.add('sticker-selected');
 }
 
+// PWA
 let deferredPrompt;
 window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; btnInstall.classList.remove('hidden'); });
 btnInstall.addEventListener('click', async () => { if (!deferredPrompt) return; deferredPrompt.prompt(); const { outcome } = await deferredPrompt.userChoice; if (outcome === 'accepted') btnInstall.classList.add('hidden'); deferredPrompt = null; });
