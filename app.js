@@ -80,7 +80,7 @@ const btnShutter = document.getElementById('btn-shutter');
 const btnSwitch = document.getElementById('btn-switch');
 const btnCloseAd = document.getElementById('btn-close-ad');
 
-// 뷰티 슬라이더 4개
+// 뷰티 슬라이더
 const beautySliderBox = document.getElementById('beauty-slider-box');
 const rangeBright = document.getElementById('range-bright');
 const rangeColor = document.getElementById('range-color');
@@ -138,14 +138,14 @@ function applyLanguage() {
         btnFrame.innerText = (style.type === 'none') ? t.frameOff : t.frameChange;
     }
     
-    // 뷰티 버튼 상태
+    // 뷰티 버튼
     if (isBeautyMenuOpen) {
         btnBeauty.innerText = t.done;
     } else {
         btnBeauty.innerText = isBeautyMode ? t.beautyOn : t.beauty;
     }
     
-    // 꾸미기 버튼 상태
+    // 꾸미기 버튼
     if (isStickerMenuOpen) {
         btnPremium.innerText = t.done;
     } else {
@@ -156,7 +156,9 @@ function applyLanguage() {
     document.getElementById('txt-ad-title').innerText = t.adTitle;
     document.getElementById('txt-ad-desc').innerHTML = t.adDesc;
     document.getElementById('btn-close-ad').innerText = t.adClose;
-    statusText.innerText = navigator.onLine ? t.online : t.offline;
+    
+    // [중요] 여기서 연결 상태를 바로 업데이트하지 않고 checkConnection에 위임
+    checkConnection(); 
 }
 
 
@@ -165,6 +167,7 @@ function applyLanguage() {
 // ==========================================
 function initStickers() {
     stickerBar.innerHTML = '';
+    // stickers.js가 로드되지 않았을 경우 에러 방지
     if (typeof stickerList !== 'undefined') {
         stickerList.forEach(emoji => {
             const btn = document.createElement('button');
@@ -172,6 +175,8 @@ function initStickers() {
             btn.addEventListener('click', () => addSticker(emoji));
             stickerBar.appendChild(btn);
         });
+    } else {
+        console.error("stickerList is not defined. stickers.js check needed.");
     }
 }
 
@@ -185,7 +190,7 @@ function addSticker(text) {
 }
 
 function selectSticker(el) {
-    if (!isStickerMenuOpen) openStickerMenu(); // 선택 시 자동 메뉴 열기
+    if (!isStickerMenuOpen) openStickerMenu();
     if (activeSticker) activeSticker.classList.remove('sticker-selected');
     activeSticker = el; activeSticker.classList.add('sticker-selected');
     stickerSizeRange.value = parseInt(activeSticker.style.fontSize);
@@ -218,20 +223,15 @@ function applyFilter() {
 
 btnBeauty.addEventListener('click', () => {
     if (isBeautyMenuOpen) {
-        // [완료] 누름 -> 메뉴 닫고 설정 유지
         isBeautyMenuOpen = false;
         beautySliderBox.classList.add('hidden');
         btnBeauty.classList.remove('active-btn'); 
         if(isBeautyMode) btnBeauty.classList.add('on-mode');
     } else {
-        // [열기] 누름
         isBeautyMenuOpen = true;
-        isBeautyMode = true; // 열면 자동 ON
+        isBeautyMode = true; 
         beautySliderBox.classList.remove('hidden');
-        
-        // 꾸미기 메뉴가 열려있으면 닫기
         if(isStickerMenuOpen) closeStickerMenu();
-        
         btnBeauty.classList.add('active-btn');
         btnBeauty.classList.remove('on-mode');
         applyFilter();
@@ -253,7 +253,6 @@ function openStickerMenu() {
     if(activeSticker) stickerEditBox.classList.remove('hidden');
     stickerLayer.classList.remove('hidden');
     
-    // 뷰티 메뉴 닫기
     if(isBeautyMenuOpen) {
         isBeautyMenuOpen = false;
         beautySliderBox.classList.add('hidden');
@@ -297,7 +296,6 @@ btnCloseAd.addEventListener('click', () => {
 // 7. 기타 (카메라/프레임/타이머/PWA)
 // ==========================================
 async function initCamera() {
-    // 기존 스트림이 있다면 중지 (카메라 전환 또는 재시작 시)
     if (video.srcObject) { 
         const tracks = video.srcObject.getTracks(); 
         tracks.forEach(track => track.stop()); 
@@ -315,29 +313,28 @@ btnSwitch.addEventListener('click', () => {
     initCamera();
 });
 
-// [수정] 인터넷 연결 확인 함수 (빗금 효과 적용)
+// [수정 및 강화] 연결 확인 함수
 function checkConnection() {
-    if (navigator.onLine) {
-        // 온라인일 때: 빗금 제거 & 활성화
-        statusText.innerText = t.online;
+    // navigator.onLine은 브라우저가 네트워크에 연결되어 있으면 true를 반환합니다.
+    const isOnline = navigator.onLine;
+
+    if (isOnline) {
+        statusText.innerText = t.online; // "🟢 온라인"
+        statusText.style.color = "#00ff00"; // 녹색
         
         btnPremium.disabled = false;
         btnFrame.disabled = false;
-        
         btnPremium.classList.remove('offline-disabled');
         btnFrame.classList.remove('offline-disabled');
-    } 
-    else {
-        // 오프라인일 때: 빗금 추가 & 비활성화
-        statusText.innerText = t.offline;
+    } else {
+        statusText.innerText = t.offline; // "🔴 오프라인"
+        statusText.style.color = "#ff4757"; // 빨간색
         
         btnPremium.disabled = true;
         btnFrame.disabled = true;
-        
         btnPremium.classList.add('offline-disabled');
         btnFrame.classList.add('offline-disabled');
 
-        // 만약 프리미엄 모드나 프레임이 켜져 있었다면 강제 종료
         if(isPremiumMode) { 
             isPremiumMode = false; 
             closeStickerMenu(); 
@@ -445,22 +442,27 @@ window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); defe
 btnInstall.addEventListener('click', async () => { if (!deferredPrompt) return; deferredPrompt.prompt(); const { outcome } = await deferredPrompt.userChoice; if (outcome === 'accepted') btnInstall.classList.add('hidden'); deferredPrompt = null; });
 if (window.matchMedia('(display-mode: standalone)').matches) btnInstall.classList.add('hidden');
 
-// ==========================================
-// 8. [핵심] 백그라운드 전환 시 카메라 끄기
-// ==========================================
+// 백그라운드 전환 감지
 document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
-        // 앱이 배경으로 갔을 때: 카메라 정지
         if (video.srcObject) {
             const tracks = video.srcObject.getTracks();
             tracks.forEach(track => track.stop());
             video.srcObject = null;
         }
     } else {
-        // 앱으로 돌아왔을 때: 카메라 재시작
         initCamera();
     }
 });
 
-// 실행
-initStickers(); applyLanguage(); window.addEventListener('online', checkConnection); window.addEventListener('offline', checkConnection); initCamera(); checkConnection();
+// [중요] 실행 순서 보장 (로드 완료 후 실행)
+window.addEventListener('load', () => {
+    initStickers(); 
+    applyLanguage(); 
+    initCamera(); 
+    checkConnection(); 
+    
+    // 이벤트 리스너
+    window.addEventListener('online', checkConnection);
+    window.addEventListener('offline', checkConnection);
+});
