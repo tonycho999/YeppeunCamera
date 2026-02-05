@@ -21,10 +21,11 @@
         <div id="camera-wrap">
             <video id="video" autoplay playsinline muted></video>
             
-            <div id="frame-overlay"></div>
             <div id="retro-date" class="hidden"></div>
 
-            <div id="movable-sticker" class="hidden"></div>
+            <div id="sticker-layer" class="hidden"></div>
+            
+            <div id="frame-overlay"></div>
             
             <div id="timer-display" class="hidden"></div>
             <canvas id="canvas" style="display:none;"></canvas>
@@ -36,9 +37,10 @@
                 <input type="range" id="beauty-range" min="0" max="100" value="50">
             </div>
 
-            <div id="sticker-size-box" class="hidden">
-                <span>Size: </span>
-                <input type="range" id="sticker-size-range" min="50" max="300" value="100">
+            <div id="sticker-edit-box" class="hidden">
+                <span>Size:</span>
+                <input type="range" id="sticker-size-range" min="30" max="300" value="100">
+                <button id="btn-delete-sticker">🗑️</button>
             </div>
 
             <div id="sticker-bar" class="hidden">
