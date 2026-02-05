@@ -2,27 +2,20 @@
    1. 기본 레이아웃 & 모바일 프레임
    ========================================= */
 body, html {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #333; /* PC 배경색 */
+    margin: 0; padding: 0;
+    width: 100%; height: 100%;
+    background-color: #333;
     font-family: 'Apple SD Gothic Neo', sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: flex; justify-content: center; align-items: center;
     overflow: hidden;
-    user-select: none; /* 텍스트 선택 방지 */
+    user-select: none;
 }
 
 #mobile-frame {
-    width: 100%;
-    height: 100%;
-    max-width: 480px; /* PC에서 핸드폰 비율 유지 */
-    background: #000;
+    width: 100%; height: 100%;
+    max-width: 480px; background: #000;
     position: relative;
-    display: flex;
-    flex-direction: column;
+    display: flex; flex-direction: column;
     box-shadow: 0 0 20px rgba(0,0,0,0.5);
 }
 
@@ -30,353 +23,171 @@ body, html {
    2. 상단 바 (Top Bar)
    ========================================= */
 #top-bar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 60px;
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 60px;
     z-index: 30;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
+    display: flex; justify-content: space-around; align-items: center;
     background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);
 }
 
 .icon-btn {
-    background: rgba(0,0,0,0.4);
-    color: white;
-    border: 1px solid rgba(255,255,255,0.4);
-    border-radius: 15px;
-    padding: 6px 10px;
-    font-size: 11px;
-    min-width: 60px; /* 버튼 최소 크기 */
-    cursor: pointer;
-    transition: 0.2s;
+    background: rgba(0,0,0,0.4); color: white;
+    border: 1px solid rgba(255,255,255,0.4); border-radius: 15px;
+    padding: 6px 10px; font-size: 11px; min-width: 60px;
+    cursor: pointer; transition: 0.2s;
 }
 
-.on-mode {
-    background: #ff4757;
-    border-color: #ff4757;
-    font-weight: bold;
-}
-
-/* 비활성화된 버튼 스타일 */
-.icon-btn:disabled, .opt-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-    background: #222;
-    border-color: #444;
-}
+.on-mode { background: #ff4757; border-color: #ff4757; font-weight: bold; }
+.icon-btn:disabled, .opt-btn:disabled { opacity: 0.4; cursor: not-allowed; background: #222; border-color: #444; }
 
 /* =========================================
    3. 카메라 화면 영역 (Camera Wrap)
    ========================================= */
 #camera-wrap {
-    flex-grow: 1; /* 남은 공간 모두 차지 */
-    position: relative;
-    background: #000;
-    overflow: hidden;
-    touch-action: none; /* 드래그 시 화면 밀림 방지 */
+    flex-grow: 1; position: relative;
+    background: #000; overflow: hidden; touch-action: none;
 }
 
-#video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    /* transform은 JS에서 제어 */
-    transition: filter 0.1s;
-}
+#video { width: 100%; height: 100%; object-fit: cover; transition: filter 0.1s; }
 
-/* 3-1. 프레임 오버레이 */
+/* 프레임 오버레이 */
 #frame-overlay {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    box-sizing: border-box; /* 테두리가 안쪽으로 생김 */
-    z-index: 25; /* 스티커 레이어(20)보다 위 */
-    pointer-events: none; /* 터치 통과 */
-    border: 0px solid transparent;
-    transition: all 0.3s;
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    box-sizing: border-box; z-index: 25; pointer-events: none;
+    border: 0px solid transparent; transition: all 0.3s;
 }
-
-/* 프레임 스타일: 필름 효과 */
 .frame-film {
-    border-left: 30px solid black !important;
-    border-right: 30px solid black !important;
+    border-left: 30px solid black !important; border-right: 30px solid black !important;
     background: linear-gradient(to bottom, transparent 50%, rgba(255,255,255,0.2) 50%) left/10px 20px repeat-y,
                 linear-gradient(to bottom, transparent 50%, rgba(255,255,255,0.2) 50%) right/10px 20px repeat-y;
 }
-
-/* 프레임 스타일: 무지개 효과 */
 .frame-rainbow {
     border: 20px solid transparent !important;
-    /* 가운데를 투명하게 유지하면서 테두리에만 그라데이션 적용 */
     border-image: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet) 1 !important;
 }
 
-/* 3-2. 스티커 레이어 (멀티 스티커) */
+/* 스티커 레이어 */
 #sticker-layer {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    z-index: 20; /* 비디오 위, 프레임 아래 */
-    overflow: hidden;
-    pointer-events: auto; /* 터치 가능 */
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 20; overflow: hidden; pointer-events: auto;
 }
-
 .sticker-item {
-    position: absolute;
-    cursor: grab;
-    user-select: none;
-    transform: translate(-50%, -50%); /* 중심점 기준 배치 */
-    text-shadow: 0 0 5px rgba(0,0,0,0.3);
+    position: absolute; cursor: grab; user-select: none;
+    transform: translate(-50%, -50%); text-shadow: 0 0 5px rgba(0,0,0,0.3);
 }
-.sticker-item:active {
-    cursor: grabbing;
-}
-
-/* 선택된 스티커 효과 (파란 테두리) */
+.sticker-item:active { cursor: grabbing; }
 .sticker-selected {
-    border: 2px dashed #00a8ff;
-    background-color: rgba(0, 168, 255, 0.1);
-    border-radius: 10px;
+    border: 2px dashed #00a8ff; background-color: rgba(0, 168, 255, 0.1); border-radius: 10px;
 }
 
-/* 3-3. 타이머 숫자 */
+/* 기타 요소 */
 #timer-display {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 120px;
-    color: white;
-    font-weight: bold;
-    text-shadow: 0 0 10px rgba(0,0,0,0.5);
-    z-index: 50;
-    pointer-events: none;
-    animation: popIn 0.5s infinite alternate;
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    font-size: 120px; color: white; font-weight: bold; text-shadow: 0 0 10px rgba(0,0,0,0.5);
+    z-index: 50; pointer-events: none; animation: popIn 0.5s infinite alternate;
 }
+@keyframes popIn { from { transform: translate(-50%, -50%) scale(1); } to { transform: translate(-50%, -50%) scale(1.1); } }
 
-@keyframes popIn {
-    from { transform: translate(-50%, -50%) scale(1); }
-    to { transform: translate(-50%, -50%) scale(1.1); }
-}
-
-/* 3-4. 레트로 날짜 (화면 미리보기) */
 #retro-date {
-    position: absolute;
-    bottom: 30px; 
-    right: 30px;
-    font-family: 'Courier New', monospace; /* 타자기 폰트 */
-    font-weight: bold;
-    font-size: 24px;
-    color: #ffaa00; /* 레트로 주황색 */
-    text-shadow: 2px 2px 2px rgba(0,0,0,0.8);
-    z-index: 22; /* 스티커보다 위에 */
-    pointer-events: none;
+    position: absolute; bottom: 30px; right: 30px;
+    font-family: 'Courier New', monospace; font-weight: bold; font-size: 24px;
+    color: #ffaa00; text-shadow: 2px 2px 2px rgba(0,0,0,0.8); z-index: 22; pointer-events: none;
 }
 
 /* =========================================
    4. 하단 컨트롤 패널 (Controls)
    ========================================= */
 #controls {
-    background: #000;
-    padding: 15px 0 30px 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    border-top: 1px solid #222;
+    background: #000; padding: 15px 0 30px 0;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 12px; border-top: 1px solid #222;
 }
+#status-text { color: #666; font-size: 12px; }
 
-#status-text {
-    color: #666;
-    font-size: 12px;
-}
-
-/* 4-1. [NEW] 뽀샤시 상세 조절 박스 (4줄 슬라이더) */
+/* 4-1. 뽀샤시 상세 조절 박스 (4줄) */
 #beauty-slider-box {
     width: 85%;
     background: rgba(0, 0, 0, 0.7); /* 반투명 검정 */
     padding: 15px;
     border-radius: 15px;
-    display: flex;
-    flex-direction: column; /* 세로 정렬 */
-    gap: 12px; /* 슬라이더 간격 */
-    color: white;
-    font-size: 14px;
-    margin-bottom: 10px;
+    display: flex; flex-direction: column; gap: 12px;
+    color: white; font-size: 14px; margin-bottom: 10px;
 }
-
-/* 슬라이더 한 줄 (아이콘 + 바) */
 .slider-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
+    display: flex; align-items: center; justify-content: space-between; width: 100%;
 }
-
-.slider-row span {
-    width: 25px; /* 아이콘 영역 고정 */
-    font-size: 16px;
-    text-align: center;
-}
-
+.slider-row span { width: 25px; font-size: 16px; text-align: center; }
 .slider-row input[type=range] {
-    flex-grow: 1; /* 남은 공간 차지 */
-    margin-left: 10px;
-    height: 4px;
-    accent-color: #ff6b81; /* 핑크색 슬라이더 */
-    cursor: pointer;
+    flex-grow: 1; margin-left: 10px; height: 4px; accent-color: #ff6b81; cursor: pointer;
 }
 
-/* 4-2. 스티커 편집 박스 (크기 조절 + 삭제) */
+/* 4-2. 스티커 편집 박스 */
 #sticker-edit-box {
-    width: 85%;
-    background: #444; /* 조금 더 밝은 회색 */
-    padding: 8px 15px;
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: white;
-    font-size: 13px;
-    margin-bottom: 5px;
+    width: 85%; background: #444; padding: 8px 15px;
+    border-radius: 20px; display: flex; align-items: center; gap: 10px;
+    color: white; font-size: 13px; margin-bottom: 5px;
 }
-
-/* 삭제 버튼 스타일 */
 #btn-delete-sticker {
-    background: #ff4757;
-    border: none;
-    border-radius: 5px;
-    width: 30px; height: 30px;
-    cursor: pointer;
-    font-size: 16px;
-    display: flex; justify-content: center; align-items: center;
+    background: #ff4757; border: none; border-radius: 5px;
+    width: 30px; height: 30px; cursor: pointer;
+    font-size: 16px; display: flex; justify-content: center; align-items: center;
 }
 #btn-delete-sticker:active { background: #ff6b81; }
 
+input[type=range] { flex-grow: 1; accent-color: #ff6b81; cursor: pointer; }
+
 /* 4-3. 스티커 선택 바 */
 #sticker-bar {
-    display: flex;
-    gap: 10px;
-    overflow-x: auto;
-    width: 90%;
-    padding-bottom: 5px;
+    display: flex; gap: 10px; overflow-x: auto; width: 90%; padding-bottom: 5px;
 }
 #sticker-bar::-webkit-scrollbar { display: none; }
-
 .sticker-btn {
-    background: #333;
-    border: 2px solid #555;
-    border-radius: 10px;
-    font-size: 24px;
-    min-width: 50px;
-    height: 50px;
-    cursor: pointer;
+    background: #333; border: 2px solid #555; border-radius: 10px;
+    font-size: 24px; min-width: 50px; height: 50px; cursor: pointer;
 }
 
-/* 4-4. 옵션 버튼 (Beauty, Premium) */
-.options {
-    display: flex;
-    gap: 15px;
-}
-
+/* 4-4. 옵션 버튼 */
+.options { display: flex; gap: 15px; }
 .opt-btn {
-    background: #333;
-    color: white;
-    border: none;
-    padding: 10px 18px;
-    border-radius: 20px;
-    font-size: 14px;
-    cursor: pointer;
+    background: #333; color: white; border: none;
+    padding: 10px 18px; border-radius: 20px; font-size: 14px; cursor: pointer;
 }
-
 .active-btn { background: #ff4757; }
 .premium-active { background: gold; color: black; font-weight: bold; }
 
-
 /* =========================================
-   5. 셔터 영역 (Shutter Area)
+   5. 셔터 영역 & 광고 모달
    ========================================= */
 #shutter-area {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 30px; /* 버튼 간격 */
-    width: 100%;
-    margin-top: 10px;
+    display: flex; justify-content: center; align-items: center;
+    gap: 30px; width: 100%; margin-top: 10px;
 }
-
-/* 셔터 버튼 */
 #btn-shutter {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    background: white;
-    border: 4px solid #ccc;
-    cursor: pointer;
+    width: 70px; height: 70px; border-radius: 50%; background: white;
+    border: 4px solid #ccc; cursor: pointer;
 }
 #btn-shutter:active { background: #bbb; }
-
-/* 카메라 전환 버튼 */
 #btn-switch {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: #333;
-    color: white;
-    border: 1px solid #555;
-    font-size: 24px;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    width: 50px; height: 50px; border-radius: 50%; background: #333;
+    color: white; border: 1px solid #555; font-size: 24px;
+    cursor: pointer; display: flex; justify-content: center; align-items: center;
 }
-#btn-switch:active {
-    transform: rotate(180deg);
-    transition: 0.3s;
-}
+#btn-switch:active { transform: rotate(180deg); transition: 0.3s; }
 
-/* =========================================
-   6. 광고 모달 & 기타 유틸리티
-   ========================================= */
 #ad-modal {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.85);
-    z-index: 999;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85); z-index: 999;
+    display: flex; justify-content: center; align-items: center;
 }
-
 .ad-content-box {
-    background: white;
-    width: 80%;
-    padding: 20px;
-    border-radius: 15px;
-    text-align: center;
+    background: white; width: 80%; padding: 20px; border-radius: 15px; text-align: center;
 }
-
 .ad-placeholder {
-    width: 100%;
-    min-height: 100px;
-    background: #eee;
-    margin: 15px 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 100%; min-height: 100px; background: #eee;
+    margin: 15px 0; display: flex; align-items: center; justify-content: center;
 }
-
 #btn-close-ad {
-    background: #333;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-weight: bold;
-    cursor: pointer;
+    background: #333; color: white; border: none;
+    padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer;
 }
-
 .hidden { display: none !important; }
