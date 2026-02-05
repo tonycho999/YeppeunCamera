@@ -1,4 +1,4 @@
-/* 기본 레이아웃 (이전과 동일) */
+/* 기본 레이아웃 */
 body, html {
     margin: 0; padding: 0;
     width: 100%; height: 100%;
@@ -17,6 +17,38 @@ body, html {
     display: flex; flex-direction: column;
 }
 
+/* 상단 바 */
+#top-bar {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 60px;
+    z-index: 30;
+    display: flex; justify-content: space-around;
+    align-items: center;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);
+}
+
+.icon-btn {
+    background: rgba(0,0,0,0.4);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.4);
+    border-radius: 15px;
+    padding: 6px 10px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.on-mode { background: #ff4757; border-color: #ff4757; font-weight: bold; }
+
+/* [중요] 비활성화된 버튼 스타일 (프레임, 프리미엄) */
+.icon-btn:disabled, .opt-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: #222;
+    border-color: #444;
+}
+
+/* 카메라 영역 */
 #camera-wrap {
     flex-grow: 1;
     position: relative;
@@ -29,11 +61,22 @@ body, html {
     width: 100%; height: 100%;
     object-fit: cover;
     transform: scaleX(-1);
-    /* 필터는 이제 JS로 직접 제어합니다 */
-    transition: filter 0.1s; 
+    transition: filter 0.1s;
 }
 
-/* 움직이는 스티커 */
+/* 프레임 오버레이 */
+#frame-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    box-sizing: border-box; /* 테두리가 안쪽으로 생기게 */
+    z-index: 25;
+    pointer-events: none; /* 터치 통과 */
+    border: 0px solid transparent;
+    transition: border 0.3s;
+}
+
+/* 스티커 */
 #movable-sticker {
     position: absolute;
     top: 50%; left: 50%;
@@ -45,9 +88,27 @@ body, html {
 }
 #movable-sticker:active { cursor: grabbing; opacity: 0.8; }
 
+/* 타이머 */
+#timer-display {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 120px;
+    color: white;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(0,0,0,0.5);
+    z-index: 50;
+    pointer-events: none;
+    animation: popIn 0.5s infinite alternate;
+}
+@keyframes popIn {
+    from { transform: translate(-50%, -50%) scale(1); }
+    to { transform: translate(-50%, -50%) scale(1.1); }
+}
+
 .hidden { display: none !important; }
 
-/* 컨트롤 패널 */
+/* 하단 컨트롤 */
 #controls {
     background: #000;
     padding: 15px 0 25px 0;
@@ -58,65 +119,35 @@ body, html {
 
 #status-text { color: #666; font-size: 12px; }
 
-/* [NEW] 뽀샤시 슬라이더 박스 */
 #beauty-slider-box {
-    width: 80%;
-    background: #222;
-    padding: 10px 15px;
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: white;
-    font-size: 13px;
-    animation: fadeIn 0.3s;
+    width: 80%; background: #222; padding: 10px 15px;
+    border-radius: 20px; display: flex; align-items: center; gap: 10px;
+    color: white; font-size: 13px;
 }
+input[type=range] { flex-grow: 1; accent-color: #ff6b81; cursor: pointer; }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* 슬라이더 바 디자인 */
-input[type=range] {
-    flex-grow: 1; /* 남은 공간 꽉 채우기 */
-    accent-color: #ff6b81; /* 슬라이더 색상 (핑크) */
-    cursor: pointer;
-}
-
-/* 스티커바 (가로 스크롤) */
 #sticker-bar {
-    display: flex; gap: 10px;
-    overflow-x: auto; width: 90%; padding-bottom: 5px;
+    display: flex; gap: 10px; overflow-x: auto; width: 90%; padding-bottom: 5px;
 }
 #sticker-bar::-webkit-scrollbar { display: none; }
-
 .sticker-btn {
-    background: #333; border: 2px solid #555;
-    border-radius: 10px; font-size: 24px;
-    min-width: 50px; height: 50px; cursor: pointer;
+    background: #333; border: 2px solid #555; border-radius: 10px;
+    font-size: 24px; min-width: 50px; height: 50px; cursor: pointer;
 }
-.sticker-btn:active { background: #555; }
 
 .options { display: flex; gap: 15px; }
-
 .opt-btn {
-    background: #333; color: white;
-    border: none; padding: 10px 18px;
-    border-radius: 20px; font-size: 14px;
-    cursor: pointer;
+    background: #333; color: white; border: none; padding: 10px 18px;
+    border-radius: 20px; font-size: 14px; cursor: pointer;
 }
 .active-btn { background: #ff4757; }
 .premium-active { background: gold; color: black; font-weight: bold; }
-.opt-btn:disabled { opacity: 0.3; }
 
 #btn-shutter {
-    width: 70px; height: 70px;
-    border-radius: 50%; background: white;
+    width: 70px; height: 70px; border-radius: 50%; background: white;
     border: 4px solid #ccc; cursor: pointer;
 }
 
-/* 광고 팝업 */
 #ad-modal {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0,0,0,0.85); z-index: 999;
