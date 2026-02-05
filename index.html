@@ -1,12 +1,18 @@
-
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Smart Cam - Retro, Sticker & Photo Booth (Web App)</title>
-        <meta name="description" content="Free Web Camera App. Retro date stamp, Life 4 Cut frame, Cute stickers, and Beauty filter. No install required. 무료 웹 카메라, 인생네컷 프레임, 레트로 날짜 도장, 스티커 꾸미기.">
-    <meta name="keywords" content="smart camera, web camera, pwa, retro filter, sticker photo, beauty camera, 인생네컷, 웹카메라, 스티커사진, 레트로카메라, 뽀샤시">
+    
+    <title>Smart Cam - Retro, Sticker & Beauty (Web App)</title>
+    <meta name="description" content="Free Web Camera App without installation. Retro date stamp, Life 4 Cut frame, Sticker decoration, and 4-step Beauty filter.">
+    <meta name="keywords" content="
+        스마트카메라, 웹카메라, 인생네컷, 무설치카메라, 레트로필터, 날짜도장, 스티커사진, 뽀샤시필터, 뷰티카메라,
+        Smart Camera, Web Camera, PWA, Photobooth, Retro Filter, Date Stamp, Sticker Photo, Beauty Cam, No Install,
+        スマホでプリクラ, 無料WEBカメラ, レトロ写真, 日付入り, 韓国プリクラ, 4カット, 美肌フィルター, スタンプ加工,
+        网页相机, 在线大头贴, 人生四格, 复古滤镜, 日期水印, 贴纸相机, 美颜相机, 无需下载
+    ">
+    
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7272957295128241" crossorigin="anonymous"></script>
@@ -17,6 +23,7 @@
         
         <div id="top-bar">
             <button id="btn-install" class="icon-btn hidden" style="background:#ff4757; font-weight:bold;">⬇️ Install</button>
+            
             <button id="btn-timer" class="icon-btn"></button>
             <button id="btn-retro" class="icon-btn"></button>
             <button id="btn-frame" class="icon-btn" disabled></button>
@@ -58,7 +65,7 @@
             
             <div class="options">
                 <button id="btn-beauty" class="opt-btn">✨ Beauty</button>
-                <button id="btn-premium" class="opt-btn" disabled>🎨 Premium</button>
+                <button id="btn-premium" class="opt-btn" disabled>🎨 Deco</button>
             </div>
 
             <div id="shutter-area">
@@ -83,7 +90,10 @@
         </div>
     </div>
 
-    <div style="position:absolute; width:1px; height:1px; overflow:hidden; opacity:0; z-index:-1;">Smart Camera</div>
+    <div style="position:absolute; width:1px; height:1px; overflow:hidden; opacity:0; z-index:-1;">
+        Smart Web Camera, Photo Booth, Sticker Camera, Beauty Filter.
+        인생네컷, 무료 웹카메라, 스티커 사진, 뽀샤시 필터.
+    </div>
 
     <script src="stickers.js"></script>
     <script src="app.js"></script>
