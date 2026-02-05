@@ -37,7 +37,10 @@ body, html {
     cursor: pointer; transition: 0.2s;
 }
 
+/* 켜진 상태 (ON) - 빨간색 */
 .on-mode { background: #ff4757; border-color: #ff4757; font-weight: bold; }
+
+/* 비활성화 상태 */
 .icon-btn:disabled, .opt-btn:disabled { opacity: 0.4; cursor: not-allowed; background: #222; border-color: #444; }
 
 /* =========================================
@@ -153,7 +156,9 @@ input[type=range] { flex-grow: 1; accent-color: #ff6b81; cursor: pointer; }
     padding: 10px 18px; border-radius: 20px; font-size: 14px; cursor: pointer;
     min-width: 80px; /* 완료 버튼 폭 확보 */
 }
-.active-btn { background: #ff4757; }
+/* 편집 모드 (메뉴 열림) - 흰색 */
+.active-btn { background: #fff !important; color: #000 !important; font-weight: bold; } 
+/* 프리미엄 활성화 - 금색 */
 .premium-active { background: gold; color: black; font-weight: bold; }
 
 /* =========================================
@@ -192,3 +197,32 @@ input[type=range] { flex-grow: 1; accent-color: #ff6b81; cursor: pointer; }
     padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer;
 }
 .hidden { display: none !important; }
+
+
+/* =========================================
+   [NEW] 오프라인 비활성화 빗금 스타일
+   ========================================= */
+.offline-disabled {
+    position: relative;       /* 빗금 위치 기준 */
+    opacity: 0.5 !important;  /* 버튼 흐리게 */
+    cursor: not-allowed !important;
+    pointer-events: none;     /* 클릭 방지 */
+}
+
+/* 가상 요소로 빗금(Diagonal Line) 그리기 */
+.offline-disabled::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    /* 빨간색(#ff4757) 대각선 선 그리기 */
+    background: linear-gradient(
+        45deg, 
+        transparent 48%, 
+        #ff4757 48%, 
+        #ff4757 52%, 
+        transparent 52%
+    );
+    border-radius: 20px; /* 버튼 둥글기에 맞춤 */
+    z-index: 10;
+}
