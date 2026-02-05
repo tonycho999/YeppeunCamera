@@ -1,6 +1,6 @@
 {
-  "name": "나만의 스마트 카메라",
-  "short_name": "스마트캠",
+  "name": "Yeppeun Camera",
+  "short_name": "Yeppeun Camera",
   "description": "필터와 스티커 기능이 있는 무료 웹 카메라",
   "start_url": "./index.html",
   "display": "standalone",
