@@ -1,4 +1,4 @@
-/* 기본 레이아웃 유지 */
+/* 기본 레이아웃 (이전과 동일) */
 body, html {
     margin: 0; padding: 0;
     width: 100%; height: 100%;
@@ -6,7 +6,7 @@ body, html {
     font-family: 'Apple SD Gothic Neo', sans-serif;
     display: flex; justify-content: center; align-items: center;
     overflow: hidden;
-    user-select: none; /* 텍스트 선택 방지 (드래그 오류 방지) */
+    user-select: none;
 }
 
 #mobile-frame {
@@ -22,66 +22,79 @@ body, html {
     position: relative;
     background: #000;
     overflow: hidden;
-    touch-action: none; /* 스티커 드래그 시 화면 스크롤 방지 */
+    touch-action: none;
 }
 
 #video {
     width: 100%; height: 100%;
     object-fit: cover;
     transform: scaleX(-1);
+    /* 필터는 이제 JS로 직접 제어합니다 */
+    transition: filter 0.1s; 
 }
 
-.filter-beauty {
-    filter: brightness(1.1) contrast(0.95) saturate(1.1) blur(0.5px);
-}
-
-/* [NEW] 움직이는 스티커 스타일 */
+/* 움직이는 스티커 */
 #movable-sticker {
     position: absolute;
-    /* 초기값은 자바스크립트로 제어하지만 기본은 중앙 */
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
     font-size: 100px;
-    cursor: grab; /* 손바닥 모양 */
+    cursor: grab;
     z-index: 20;
-    text-shadow: 0 0 10px rgba(0,0,0,0.5); /* 잘 보이게 그림자 */
+    text-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
-#movable-sticker:active {
-    cursor: grabbing; /* 잡은 모양 */
-    opacity: 0.8;
-}
+#movable-sticker:active { cursor: grabbing; opacity: 0.8; }
 
 .hidden { display: none !important; }
 
 /* 컨트롤 패널 */
 #controls {
     background: #000;
-    padding: 20px 0;
+    padding: 15px 0 25px 0;
     display: flex; flex-direction: column; align-items: center;
-    gap: 15px;
+    gap: 12px;
     border-top: 1px solid #222;
 }
 
 #status-text { color: #666; font-size: 12px; }
 
-/* [NEW] 스티커 선택 바 (가로 스크롤) */
-#sticker-bar {
+/* [NEW] 뽀샤시 슬라이더 박스 */
+#beauty-slider-box {
+    width: 80%;
+    background: #222;
+    padding: 10px 15px;
+    border-radius: 20px;
     display: flex;
+    align-items: center;
     gap: 10px;
-    overflow-x: auto; /* 가로 스크롤 */
-    width: 90%;
-    padding-bottom: 5px;
+    color: white;
+    font-size: 13px;
+    animation: fadeIn 0.3s;
 }
-/* 스크롤바 숨기기 */
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 슬라이더 바 디자인 */
+input[type=range] {
+    flex-grow: 1; /* 남은 공간 꽉 채우기 */
+    accent-color: #ff6b81; /* 슬라이더 색상 (핑크) */
+    cursor: pointer;
+}
+
+/* 스티커바 (가로 스크롤) */
+#sticker-bar {
+    display: flex; gap: 10px;
+    overflow-x: auto; width: 90%; padding-bottom: 5px;
+}
 #sticker-bar::-webkit-scrollbar { display: none; }
 
 .sticker-btn {
-    background: #333;
-    border: 2px solid #555;
-    border-radius: 10px;
-    font-size: 24px;
-    min-width: 50px; height: 50px;
-    cursor: pointer;
+    background: #333; border: 2px solid #555;
+    border-radius: 10px; font-size: 24px;
+    min-width: 50px; height: 50px; cursor: pointer;
 }
 .sticker-btn:active { background: #555; }
 
