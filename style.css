@@ -1,0 +1,124 @@
+// DOM 요소 가져오기
+const video = document.getElementById('video');
+const canvas = document.getElementById('canvas');
+const sticker = document.getElementById('premium-sticker');
+const adArea = document.getElementById('ad-area');
+const statusText = document.getElementById('status-text');
+
+const btnBeauty = document.getElementById('btn-beauty');
+const btnPremium = document.getElementById('btn-premium');
+const btnShutter = document.getElementById('btn-shutter');
+
+// 상태 변수
+let isBeautyMode = false;
+let isPremiumMode = false;
+
+// 1. 카메라 실행
+async function initCamera() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: 'user' },
+            audio: false
+        });
+        video.srcObject = stream;
+    } catch (err) {
+        alert("카메라 권한이 필요합니다.");
+    }
+}
+
+// 2. 온라인/오프라인 감지 로직 (핵심)
+function checkConnection() {
+    if (navigator.onLine) {
+        // [온라인]
+        statusText.innerText = "🟢 온라인: 프리미엄 기능 & 광고 활성";
+        adArea.classList.remove('hidden'); // 광고 보이기
+        btnPremium.disabled = false;       // 프리미엄 버튼 잠금 해제
+    } else {
+        // [오프라인]
+        statusText.innerText = "🔴 오프라인: 기본 기능만 가능";
+        adArea.classList.add('hidden');    // 광고 숨기기
+        btnPremium.disabled = true;        // 프리미엄 버튼 잠금
+        
+        // 만약 스티커 쓰고 있었다면 끄기
+        if (isPremiumMode) {
+            isPremiumMode = false;
+            sticker.classList.add('hidden');
+            btnPremium.classList.remove('premium-active');
+        }
+    }
+}
+
+// 3. 버튼 이벤트 리스너
+btnBeauty.addEventListener('click', () => {
+    isBeautyMode = !isBeautyMode;
+    if (isBeautyMode) {
+        video.classList.add('filter-beauty');
+        btnBeauty.classList.add('active-btn');
+    } else {
+        video.classList.remove('filter-beauty');
+        btnBeauty.classList.remove('active-btn');
+    }
+});
+
+btnPremium.addEventListener('click', () => {
+    // 혹시라도 오프라인인데 눌렀을 경우 방어
+    if (!navigator.onLine) {
+        alert("인터넷 연결이 필요합니다!");
+        return;
+    }
+
+    isPremiumMode = !isPremiumMode;
+    if (isPremiumMode) {
+        sticker.classList.remove('hidden');
+        btnPremium.classList.add('premium-active');
+    } else {
+        sticker.classList.add('hidden');
+        btnPremium.classList.remove('premium-active');
+    }
+});
+
+// 4. 사진 촬영 및 저장
+btnShutter.addEventListener('click', () => {
+    const ctx = canvas.getContext('2d');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    // 거울 모드 적용 (좌우 반전)
+    ctx.translate(canvas.width, 0);
+    ctx.scale(-1, 1);
+
+    // 뽀샤시 필터 적용 (저장되는 사진에도 필터 먹이기)
+    if (isBeautyMode) {
+        ctx.filter = 'brightness(1.1) contrast(0.95) saturate(1.1) blur(1px)';
+    }
+
+    // 비디오 화면 그리기
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+    // 필터 해제 (스티커에는 필터 안 먹게)
+    ctx.filter = 'none';
+
+    // 프리미엄 스티커 그리기 (활성화 상태라면)
+    if (isPremiumMode) {
+        // 캔버스 좌표계 복구 및 중앙 정렬 계산
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        ctx.scale(-1, 1); // 글자는 다시 뒤집어야 제대로 보임
+        ctx.font = "150px serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("🐱", 0, 0);
+    }
+
+    // 다운로드 실행
+    const link = document.createElement('a');
+    link.download = `photo_${Date.now()}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+});
+
+// 5. 이벤트 등록 및 시작
+window.addEventListener('online', checkConnection);
+window.addEventListener('offline', checkConnection);
+
+initCamera();
+checkConnection(); // 시작할 때 상태 체크
