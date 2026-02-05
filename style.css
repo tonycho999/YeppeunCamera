@@ -49,7 +49,7 @@ body, html {
     border-radius: 15px;
     padding: 6px 10px;
     font-size: 11px;
-    min-width: 60px; /* 버튼 최소 크기 */
+    min-width: 60px;
     cursor: pointer;
     transition: 0.2s;
 }
@@ -72,18 +72,18 @@ body, html {
    3. 카메라 화면 영역 (Camera Wrap)
    ========================================= */
 #camera-wrap {
-    flex-grow: 1; /* 남은 공간 모두 차지 */
+    flex-grow: 1;
     position: relative;
     background: #000;
     overflow: hidden;
-    touch-action: none; /* 드래그 시 화면 밀림 방지 */
+    touch-action: none;
 }
 
 #video {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    /* transform은 JS에서 제어 (전면: scaleX(-1), 후면: none) */
+    /* transform은 JS에서 제어 */
     transition: filter 0.1s;
 }
 
@@ -92,9 +92,9 @@ body, html {
     position: absolute;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    box-sizing: border-box; /* 테두리가 안쪽으로 생김 */
-    z-index: 25;
-    pointer-events: none; /* 터치 통과 */
+    box-sizing: border-box;
+    z-index: 25; /* 스티커 레이어(20)보다 위 */
+    pointer-events: none;
     border: 0px solid transparent;
     transition: all 0.3s;
 }
@@ -107,26 +107,38 @@ body, html {
                 linear-gradient(to bottom, transparent 50%, rgba(255,255,255,0.2) 50%) right/10px 20px repeat-y;
 }
 
-/* 프레임 스타일: 무지개 효과 */
+/* 프레임 스타일: 무지개 효과 (수정됨) */
 .frame-rainbow {
     border: 20px solid transparent !important;
-    background: linear-gradient(white, white) padding-box, 
-                linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet) border-box;
+    border-image: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet) 1 !important;
 }
 
-/* 3-2. 움직이는 스티커 */
-#movable-sticker {
+/* 3-2. 스티커 레이어 및 아이템 (멀티 스티커) */
+#sticker-layer {
     position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 100px;
-    cursor: grab;
-    z-index: 20;
-    text-shadow: 0 0 10px rgba(0,0,0,0.5);
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 20; /* 비디오 위, 프레임 아래 */
+    overflow: hidden;
+    pointer-events: auto; /* 터치 가능 */
 }
-#movable-sticker:active {
+
+.sticker-item {
+    position: absolute;
+    cursor: grab;
+    user-select: none;
+    transform: translate(-50%, -50%); /* 중심점 기준 배치 */
+    text-shadow: 0 0 5px rgba(0,0,0,0.3);
+}
+.sticker-item:active {
     cursor: grabbing;
-    opacity: 0.8;
+}
+
+/* 선택된 스티커 효과 (파란 테두리) */
+.sticker-selected {
+    border: 2px dashed #00a8ff;
+    background-color: rgba(0, 168, 255, 0.1);
+    border-radius: 10px;
 }
 
 /* 3-3. 타이머 숫자 */
@@ -148,22 +160,22 @@ body, html {
     to { transform: translate(-50%, -50%) scale(1.1); }
 }
 
-/* 3-4. 레트로 날짜 (화면 미리보기) */
+/* 3-4. 레트로 날짜 */
 #retro-date {
     position: absolute;
     bottom: 30px; 
     right: 30px;
-    font-family: 'Courier New', monospace; /* 타자기 폰트 */
+    font-family: 'Courier New', monospace;
     font-weight: bold;
     font-size: 24px;
-    color: #ffaa00; /* 레트로 주황색 */
+    color: #ffaa00;
     text-shadow: 2px 2px 2px rgba(0,0,0,0.8);
-    z-index: 22; /* 스티커보다 위 */
+    z-index: 22;
     pointer-events: none;
 }
 
 /* =========================================
-   4. 하단 컨트롤 패널 (Controls)
+   4. 하단 컨트롤 패널
    ========================================= */
 #controls {
     background: #000;
@@ -192,13 +204,40 @@ body, html {
     color: white;
     font-size: 13px;
 }
+
+/* 4-2. [NEW] 스티커 편집 박스 (크기 조절 + 삭제) */
+#sticker-edit-box {
+    width: 85%;
+    background: #444; /* 조금 더 밝은 회색 */
+    padding: 8px 15px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+/* 삭제 버튼 스타일 */
+#btn-delete-sticker {
+    background: #ff4757;
+    border: none;
+    border-radius: 5px;
+    width: 30px; height: 30px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex; justify-content: center; align-items: center;
+}
+#btn-delete-sticker:active { background: #ff6b81; }
+
 input[type=range] {
     flex-grow: 1;
     accent-color: #ff6b81;
     cursor: pointer;
 }
 
-/* 4-2. 스티커 선택 바 */
+/* 4-3. 스티커 선택 바 */
 #sticker-bar {
     display: flex;
     gap: 10px;
@@ -218,7 +257,7 @@ input[type=range] {
     cursor: pointer;
 }
 
-/* 4-3. 옵션 버튼 (Beauty, Premium) */
+/* 4-4. 옵션 버튼 */
 .options {
     display: flex;
     gap: 15px;
@@ -237,23 +276,20 @@ input[type=range] {
 .active-btn { background: #ff4757; }
 .premium-active { background: gold; color: black; font-weight: bold; }
 
-
 /* =========================================
-   5. 셔터 영역 (Shutter Area)
+   5. 셔터 영역
    ========================================= */
 #shutter-area {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 30px; /* 버튼 간격 */
+    gap: 30px;
     width: 100%;
     margin-top: 10px;
 }
 
-/* 셔터 버튼 */
 #btn-shutter {
-    width: 70px;
-    height: 70px;
+    width: 70px; height: 70px;
     border-radius: 50%;
     background: white;
     border: 4px solid #ccc;
@@ -261,27 +297,20 @@ input[type=range] {
 }
 #btn-shutter:active { background: #bbb; }
 
-/* 카메라 전환 버튼 */
 #btn-switch {
-    width: 50px;
-    height: 50px;
+    width: 50px; height: 50px;
     border-radius: 50%;
     background: #333;
     color: white;
     border: 1px solid #555;
     font-size: 24px;
     cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: flex; justify-content: center; align-items: center;
 }
-#btn-switch:active {
-    transform: rotate(180deg);
-    transition: 0.3s;
-}
+#btn-switch:active { transform: rotate(180deg); transition: 0.3s; }
 
 /* =========================================
-   6. 광고 모달 & 기타 유틸리티
+   6. 광고 모달 & 유틸리티
    ========================================= */
 #ad-modal {
     position: absolute;
@@ -323,30 +352,3 @@ input[type=range] {
 }
 
 .hidden { display: none !important; }
-
-/* 기존 CSS 내용 유지하되, 아래 내용으로 수정/추가하세요 */
-
-/* ... (위쪽 코드 동일) ... */
-
-/* [수정] 프레임 스타일: 무지개 효과 (흰화면 오류 해결) */
-.frame-rainbow {
-    border: 20px solid transparent !important;
-    /* 가운데를 투명하게 유지하면서 테두리에만 그라데이션 적용 */
-    border-image: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet) 1 !important;
-}
-
-/* [NEW] 스티커 크기 조절 박스 */
-#sticker-size-box {
-    width: 80%;
-    background: #444; /* 뽀샤시랑 구분되게 약간 밝은색 */
-    padding: 8px 15px;
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: white;
-    font-size: 13px;
-    margin-bottom: 5px; /* 스티커바랑 간격 */
-}
-
-/* ... (나머지 CSS 동일) ... */
