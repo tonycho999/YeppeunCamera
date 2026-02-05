@@ -185,7 +185,7 @@ function addSticker(text) {
 }
 
 function selectSticker(el) {
-    if (!isStickerMenuOpen) openStickerMenu();
+    if (!isStickerMenuOpen) openStickerMenu(); // 선택 시 자동 메뉴 열기
     if (activeSticker) activeSticker.classList.remove('sticker-selected');
     activeSticker = el; activeSticker.classList.add('sticker-selected');
     stickerSizeRange.value = parseInt(activeSticker.style.fontSize);
@@ -218,15 +218,20 @@ function applyFilter() {
 
 btnBeauty.addEventListener('click', () => {
     if (isBeautyMenuOpen) {
+        // [완료] 누름 -> 메뉴 닫고 설정 유지
         isBeautyMenuOpen = false;
         beautySliderBox.classList.add('hidden');
         btnBeauty.classList.remove('active-btn'); 
         if(isBeautyMode) btnBeauty.classList.add('on-mode');
     } else {
+        // [열기] 누름
         isBeautyMenuOpen = true;
-        isBeautyMode = true; 
+        isBeautyMode = true; // 열면 자동 ON
         beautySliderBox.classList.remove('hidden');
+        
+        // 꾸미기 메뉴가 열려있으면 닫기
         if(isStickerMenuOpen) closeStickerMenu();
+        
         btnBeauty.classList.add('active-btn');
         btnBeauty.classList.remove('on-mode');
         applyFilter();
@@ -248,6 +253,7 @@ function openStickerMenu() {
     if(activeSticker) stickerEditBox.classList.remove('hidden');
     stickerLayer.classList.remove('hidden');
     
+    // 뷰티 메뉴 닫기
     if(isBeautyMenuOpen) {
         isBeautyMenuOpen = false;
         beautySliderBox.classList.add('hidden');
@@ -309,9 +315,36 @@ btnSwitch.addEventListener('click', () => {
     initCamera();
 });
 
+// [수정] 인터넷 연결 확인 함수 (빗금 효과 적용)
 function checkConnection() {
-    if (navigator.onLine) { statusText.innerText = t.online; btnPremium.disabled = false; btnFrame.disabled = false; }
-    else { statusText.innerText = t.offline; btnPremium.disabled = true; btnFrame.disabled = true; if(isPremiumMode) { isPremiumMode=false; closeStickerMenu(); frameIndex=0; updateFrameUI(); } }
+    if (navigator.onLine) {
+        // 온라인일 때: 빗금 제거 & 활성화
+        statusText.innerText = t.online;
+        
+        btnPremium.disabled = false;
+        btnFrame.disabled = false;
+        
+        btnPremium.classList.remove('offline-disabled');
+        btnFrame.classList.remove('offline-disabled');
+    } 
+    else {
+        // 오프라인일 때: 빗금 추가 & 비활성화
+        statusText.innerText = t.offline;
+        
+        btnPremium.disabled = true;
+        btnFrame.disabled = true;
+        
+        btnPremium.classList.add('offline-disabled');
+        btnFrame.classList.add('offline-disabled');
+
+        // 만약 프리미엄 모드나 프레임이 켜져 있었다면 강제 종료
+        if(isPremiumMode) { 
+            isPremiumMode = false; 
+            closeStickerMenu(); 
+            frameIndex = 0; 
+            updateFrameUI(); 
+        }
+    }
 }
 
 btnTimer.addEventListener('click', () => {
