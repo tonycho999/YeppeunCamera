@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>스마트 카메라</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+    <div id="camera-wrap">
+        <video id="video" autoplay playsinline></video>
+        
+        <div id="premium-sticker" class="hidden">
+            <span>🐱</span>
+        </div>
+        
+        <canvas id="canvas" style="display:none;"></canvas>
+    </div>
+
+    <div id="ad-area" class="hidden">
+        <div class="ad-content">
+            <p>📢 광고 배너<br>(인터넷 연결됨: 프리미엄 활성화)</p>
+        </div>
+    </div>
+
+    <div id="controls">
+        <div id="status-text">상태 확인 중...</div>
+        
+        <div class="options">
+            <button id="btn-beauty" class="opt-btn">✨ 뽀샤시</button>
+            <button id="btn-premium" class="opt-btn" disabled>👑 스티커(유료)</button>
+        </div>
+
+        <button id="btn-shutter"></button>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // PWA 서비스 워커 등록 (오프라인 실행용)
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js')
+                .then(() => console.log('서비스 워커 등록 완료'))
+                .catch((err) => console.log('서비스 워커 실패', err));
+        }
+    </script>
+</body>
+</html>
