@@ -22,11 +22,11 @@
             <video id="video" autoplay playsinline muted></video>
             
             <div id="frame-overlay"></div>
+            
+            <div id="retro-date" class="hidden"></div>
 
             <div id="movable-sticker" class="hidden">🐱</div>
-            
             <div id="timer-display" class="hidden"></div>
-
             <canvas id="canvas" style="display:none;"></canvas>
         </div>
 
@@ -51,7 +51,12 @@
                 <button id="btn-premium" class="opt-btn" disabled>🎨 Premium</button>
             </div>
 
-            <button id="btn-shutter"></button>
+            <div id="shutter-area">
+                <div style="width: 50px;"></div>
+                <button id="btn-shutter"></button>
+                <button id="btn-switch">🔄</button>
+            </div>
+
             <div id="status-text" style="margin-top:10px;">Connecting...</div>
         </div>
 
@@ -59,7 +64,6 @@
             <div class="ad-content-box">
                 <h3 id="txt-ad-title">Wait! 🖐️</h3>
                 <p id="txt-ad-desc">Watch ad to unlock stickers & frames!</p>
-                
                 <div class="ad-placeholder">
                     <ins class="adsbygoogle"
                          style="display:block"
@@ -67,20 +71,14 @@
                          data-ad-slot="1234567890"  
                          data-ad-format="auto"
                          data-full-width-responsive="true"></ins>
-                    <script>
-                         (adsbygoogle = window.adsbygoogle || []).push({});
-                    </script>
+                    <script> (adsbygoogle = window.adsbygoogle || []).push({}); </script>
                 </div>
-
                 <button id="btn-close-ad">Close & Unlock</button>
             </div>
         </div>
-
     </div>
 
     <script src="app.js"></script>
-    <script>
-        if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
-    </script>
+    <script> if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js'); </script>
 </body>
 </html>
