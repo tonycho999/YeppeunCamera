@@ -58,7 +58,7 @@ const video = document.getElementById('video');
 const canvas = document.getElementById('canvas');
 const stickerEl = document.getElementById('movable-sticker');
 const frameOverlay = document.getElementById('frame-overlay');
-const retroDateEl = document.getElementById('retro-date'); // [NEW] 날짜 표시 요소
+const retroDateEl = document.getElementById('retro-date');
 const statusText = document.getElementById('status-text');
 const timerDisplay = document.getElementById('timer-display');
 
@@ -70,11 +70,12 @@ const btnPremium = document.getElementById('btn-premium');
 const btnShutter = document.getElementById('btn-shutter');
 const btnSwitch = document.getElementById('btn-switch');
 const btnCloseAd = document.getElementById('btn-close-ad');
+const stickerBar = document.getElementById('sticker-bar'); // [NEW] 스티커 바
 
 let isBeautyMode = false;
 let isPremiumMode = false;
 let isRetroOn = false;
-let timerState = 0; // 0, 3, 5, 10
+let timerState = 0; 
 let facingMode = 'user';
 
 const frameStyles = [
@@ -88,8 +89,32 @@ const frameStyles = [
 let frameIndex = 0;
 
 // ==========================================
-// 3. 초기화
+// 3. 초기화 (스티커 생성 포함)
 // ==========================================
+
+// [NEW] 스티커 버튼 자동 생성 함수
+function initStickers() {
+    stickerBar.innerHTML = ''; // 기존 내용 비우기
+    
+    // stickers.js에 있는 stickerList 배열을 가져와서 버튼 생성
+    if (typeof stickerList !== 'undefined') {
+        stickerList.forEach(emoji => {
+            const btn = document.createElement('button');
+            btn.className = 'sticker-btn';
+            btn.innerText = emoji;
+            
+            // 버튼 클릭 시 동작
+            btn.addEventListener('click', () => {
+                stickerEl.innerText = emoji;
+            });
+            
+            stickerBar.appendChild(btn);
+        });
+    } else {
+        console.error("stickerList를 찾을 수 없습니다. stickers.js가 연결되었나요?");
+    }
+}
+
 function applyLanguage() {
     btnTimer.innerText = t.timerOff;
     btnRetro.innerText = t.retroOff;
@@ -136,11 +161,7 @@ function checkConnection() {
     }
 }
 
-// ==========================================
-// 4. 기능 로직 (타이머 & 레트로 수정됨)
-// ==========================================
-
-// [NEW] 타이머 로직: 0 -> 3 -> 5 -> 10 -> 0
+// ... 기능 로직들 ...
 btnTimer.addEventListener('click', () => {
     if (timerState === 0) timerState = 3;
     else if (timerState === 3) timerState = 5;
@@ -151,48 +172,30 @@ btnTimer.addEventListener('click', () => {
         btnTimer.innerText = t.timerOff;
         btnTimer.classList.remove('on-mode');
     } else {
-        // 다국어 텍스트 매핑
         let label = "";
         if(timerState === 3) label = t.timer3;
         if(timerState === 5) label = t.timer5;
         if(timerState === 10) label = t.timer10;
-        
         btnTimer.innerText = label;
         btnTimer.classList.add('on-mode');
     }
 });
 
-// [NEW] 레트로 날짜 표시 (화면 오버레이)
 btnRetro.addEventListener('click', () => {
     isRetroOn = !isRetroOn;
     btnRetro.innerText = isRetroOn ? t.retroOn : t.retroOff;
     btnRetro.classList.toggle('on-mode');
-
-    if (isRetroOn) {
-        updateRetroDate(); // 날짜 업데이트
-        retroDateEl.classList.remove('hidden'); // 화면에 보이기
-    } else {
-        retroDateEl.classList.add('hidden'); // 숨기기
-    }
+    if (isRetroOn) { updateRetroDate(); retroDateEl.classList.remove('hidden'); }
+    else { retroDateEl.classList.add('hidden'); }
 });
 
-// 현재 날짜 텍스트 만들기 (2024. 02. 05 스타일)
 function getRetroString() {
     const now = new Date();
     return `${now.getFullYear()}. ${String(now.getMonth()+1).padStart(2,'0')}. ${String(now.getDate()).padStart(2,'0')}`;
 }
+function updateRetroDate() { retroDateEl.innerText = getRetroString(); }
+setInterval(() => { if (isRetroOn) updateRetroDate(); }, 1000);
 
-function updateRetroDate() {
-    retroDateEl.innerText = getRetroString();
-}
-
-// 매일 자정에 날짜가 바뀔수도 있으니 1초마다 갱신 (레트로 켜져있으면)
-setInterval(() => {
-    if (isRetroOn) updateRetroDate();
-}, 1000);
-
-
-// ... (프레임, 뽀샤시 로직 기존 동일) ...
 btnFrame.addEventListener('click', () => {
     if (!navigator.onLine) { alert(t.alertNet); return; }
     if (!isPremiumMode) { document.getElementById('ad-modal').classList.remove('hidden'); return; }
@@ -228,27 +231,25 @@ beautyRange.addEventListener('input', () => { if (isBeautyMode) applyFilter(); }
 btnPremium.addEventListener('click', () => {
     if (!navigator.onLine) { alert(t.alertNet); return; }
     if (!isPremiumMode) document.getElementById('ad-modal').classList.remove('hidden');
-    else togglePremiumUI(!document.getElementById('sticker-bar').classList.contains('hidden'));
+    else togglePremiumUI(stickerBar.classList.contains('hidden')); // 토글 수정
 });
 btnCloseAd.addEventListener('click', () => {
     document.getElementById('ad-modal').classList.add('hidden'); isPremiumMode = true; alert(t.alertPremium);
     togglePremiumUI(true); btnFrame.classList.remove('on-mode');
 });
 function togglePremiumUI(show) {
-    const bar = document.getElementById('sticker-bar');
-    if (show) { bar.classList.remove('hidden'); stickerEl.classList.remove('hidden'); btnPremium.innerText = t.premiumOn; btnPremium.classList.add('premium-active'); }
-    else { bar.classList.add('hidden'); stickerEl.classList.add('hidden'); btnPremium.innerText = t.premium; btnPremium.classList.remove('premium-active'); }
+    if (show) { stickerBar.classList.remove('hidden'); stickerEl.classList.remove('hidden'); btnPremium.innerText = t.premiumOn; btnPremium.classList.add('premium-active'); }
+    else { stickerBar.classList.add('hidden'); stickerEl.classList.add('hidden'); btnPremium.innerText = t.premium; btnPremium.classList.remove('premium-active'); }
 }
-document.querySelectorAll('.sticker-btn').forEach(btn => btn.addEventListener('click', e => stickerEl.innerText = e.target.innerText));
+
+// 스티커 드래그 로직
 let isDrag=false, sX, sY, iL, iT;
 const startD = e => { if(!isPremiumMode)return; e.preventDefault(); isDrag=true; sX=e.touches?e.touches[0].clientX:e.clientX; sY=e.touches?e.touches[0].clientY:e.clientY; const r=stickerEl.getBoundingClientRect(), p=document.getElementById('camera-wrap').getBoundingClientRect(); iL=r.left-p.left; iT=r.top-p.top; document.addEventListener('touchmove',moveD,{passive:false}); document.addEventListener('mousemove',moveD); document.addEventListener('touchend',endD); document.addEventListener('mouseup',endD); };
 const moveD = e => { if(!isDrag)return; e.preventDefault(); let cX=e.touches?e.touches[0].clientX:e.clientX, cY=e.touches?e.touches[0].clientY:e.clientY; stickerEl.style.transform='none'; stickerEl.style.left=`${iL+(cX-sX)}px`; stickerEl.style.top=`${iT+(cY-sY)}px`; };
 const endD = () => { isDrag=false; document.removeEventListener('touchmove',moveD); document.removeEventListener('mousemove',moveD); document.removeEventListener('touchend',endD); document.removeEventListener('mouseup',endD); };
 stickerEl.addEventListener('touchstart',startD,{passive:false}); stickerEl.addEventListener('mousedown',startD);
 
-// ==========================================
-// 셔터 및 저장 (날짜 저장 로직 포함)
-// ==========================================
+// 셔터 및 저장
 btnShutter.addEventListener('click', () => {
     if (timerState > 0) {
         let count = timerState; timerDisplay.innerText = count; timerDisplay.classList.remove('hidden');
@@ -266,14 +267,13 @@ function takePhoto() {
     canvas.width = vw; canvas.height = vh;
 
     if (facingMode === 'user') { ctx.translate(vw, 0); ctx.scale(-1, 1); }
-    
     ctx.filter = isBeautyMode ? applyFilter() : 'none';
     ctx.drawImage(video, 0, 0, vw, vh);
     ctx.filter = 'none';
 
     // 프레임
     const style = frameStyles[frameIndex];
-    if (facingMode === 'user') { ctx.scale(-1, 1); ctx.translate(-vw, 0); } // 좌표계 원복
+    if (facingMode === 'user') { ctx.scale(-1, 1); ctx.translate(-vw, 0); }
 
     if (style.type === 'color') {
         ctx.strokeStyle = style.val; ctx.lineWidth = 40; ctx.strokeRect(20, 20, vw-40, vh-40);
@@ -302,10 +302,8 @@ function takePhoto() {
         const rx = centerX / wrapRect.width;
         const ry = centerY / wrapRect.height;
 
-        // 전면 카메라일 경우 스티커 위치도 반전 계산 필요 (사용자가 보는 화면과 일치시키기 위해)
         let canvasX = rx * vw;
         if(facingMode === 'user') canvasX = (1 - rx) * vw; 
-        
         const canvasY = ry * vh;
 
         ctx.font = `${stickerRect.height * (vw / wrapRect.width)}px serif`;
@@ -313,14 +311,13 @@ function takePhoto() {
         ctx.fillText(stickerEl.innerText, canvasX, canvasY);
     }
 
-    // [NEW] 레트로 날짜 저장
+    // 레트로 날짜
     if (isRetroOn) {
-        const dateStr = getRetroString(); // 함수 재사용
+        const dateStr = getRetroString();
         ctx.font = `bold ${vw * 0.05}px 'Courier New', monospace`;
         ctx.fillStyle = "#ffaa00";
         ctx.textAlign = "right";
         ctx.shadowColor = "rgba(0,0,0,0.8)"; ctx.shadowBlur = 4;
-        
         const paddingX = (style.type === 'film') ? 80 : 50; 
         ctx.fillText(dateStr, vw - paddingX, vh - 50);
     }
@@ -331,6 +328,8 @@ function takePhoto() {
     link.click();
 }
 
+// 실행 순서: 스티커 로드 -> 언어 적용 -> 카메라 시작
+initStickers();
 applyLanguage();
 window.addEventListener('online', checkConnection);
 window.addEventListener('offline', checkConnection);
