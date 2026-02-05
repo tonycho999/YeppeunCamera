@@ -12,17 +12,25 @@
 
     <div id="mobile-frame">
         
+        <div id="top-bar">
+            <button id="btn-timer" class="icon-btn">⏱️ OFF</button>
+            <button id="btn-date" class="icon-btn">📅 날짜 OFF</button>
+            <button id="btn-frame" class="icon-btn" disabled>🖼️ 프레임(유료)</button>
+        </div>
+
         <div id="camera-wrap">
             <video id="video" autoplay playsinline muted></video>
             
+            <div id="frame-overlay"></div>
+
             <div id="movable-sticker" class="hidden">🐱</div>
             
+            <div id="timer-display" class="hidden">3</div>
+
             <canvas id="canvas" style="display:none;"></canvas>
         </div>
 
         <div id="controls">
-            <div id="status-text">연결 확인 중...</div>
-
             <div id="beauty-slider-box" class="hidden">
                 <span>강도: </span>
                 <input type="range" id="beauty-range" min="0" max="100" value="50">
@@ -40,16 +48,17 @@
             
             <div class="options">
                 <button id="btn-beauty" class="opt-btn">✨ 뽀샤시</button>
-                <button id="btn-premium" class="opt-btn" disabled>🎨 꾸미기</button>
+                <button id="btn-premium" class="opt-btn" disabled>🎨 꾸미기(유료)</button>
             </div>
 
             <button id="btn-shutter"></button>
+            <div id="status-text" style="margin-top:10px;">연결 확인 중...</div>
         </div>
 
         <div id="ad-modal" class="hidden">
             <div class="ad-content-box">
                 <h3>잠깐! 🖐️</h3>
-                <p>광고를 닫으면<br>다양한 스티커가 열립니다!</p>
+                <p>광고를 닫으면<br><b>스티커 & 프레임</b>이 열립니다!</p>
                 
                 <div class="ad-placeholder">
                     <ins class="adsbygoogle"
@@ -63,7 +72,7 @@
                     </script>
                 </div>
 
-                <button id="btn-close-ad">광고 닫고 꾸미기</button>
+                <button id="btn-close-ad">광고 닫고 프리미엄 쓰기</button>
             </div>
         </div>
 
@@ -71,9 +80,7 @@
 
     <script src="app.js"></script>
     <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./sw.js');
-        }
+        if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
     </script>
 </body>
 </html>
