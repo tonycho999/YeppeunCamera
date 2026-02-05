@@ -6,38 +6,47 @@
     <title>스마트 카메라</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
-
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7272957295128241"
-     crossorigin="anonymous"></script>
-
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7272957295128241" crossorigin="anonymous"></script>
 </head>
 <body>
 
     <div id="mobile-frame">
+        
         <div id="camera-wrap">
             <video id="video" autoplay playsinline muted></video>
-            <div id="premium-sticker" class="hidden">
-                <span>🐱</span>
-            </div>
+            
+            <div id="movable-sticker" class="hidden">🐱</div>
+            
             <canvas id="canvas" style="display:none;"></canvas>
         </div>
 
         <div id="controls">
-            <div id="status-text">상태 확인 중...</div>
+            <div id="status-text">연결 확인 중...</div>
+
+            <div id="sticker-bar" class="hidden">
+                <button class="sticker-btn">🐱</button>
+                <button class="sticker-btn">😎</button>
+                <button class="sticker-btn">🎀</button>
+                <button class="sticker-btn">👻</button>
+                <button class="sticker-btn">👽</button>
+                <button class="sticker-btn">👑</button>
+                <button class="sticker-btn">💖</button>
+            </div>
+            
             <div class="options">
                 <button id="btn-beauty" class="opt-btn">✨ 뽀샤시</button>
-                <button id="btn-premium" class="opt-btn" disabled>👑 스티커(유료)</button>
+                <button id="btn-premium" class="opt-btn" disabled>🎨 스티커 꾸미기</button>
             </div>
+
             <button id="btn-shutter"></button>
         </div>
 
         <div id="ad-modal" class="hidden">
             <div class="ad-content-box">
                 <h3>잠깐! 🖐️</h3>
-                <p>광고를 닫으면<br>프리미엄 기능이 켜집니다!</p>
+                <p>광고를 닫으면<br>다양한 스티커가 열립니다!</p>
                 
                 <div class="ad-placeholder">
-                    
                     <ins class="adsbygoogle"
                          style="display:block"
                          data-ad-client="ca-pub-7272957295128241"
@@ -47,10 +56,9 @@
                     <script>
                          (adsbygoogle = window.adsbygoogle || []).push({});
                     </script>
-                    
                 </div>
 
-                <button id="btn-close-ad">광고 닫고 스티커 쓰기</button>
+                <button id="btn-close-ad">광고 닫고 꾸미기</button>
             </div>
         </div>
 
